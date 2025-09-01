@@ -190,6 +190,77 @@ jwt:
   # 是否允许刷新令牌
   allow-refresh: true
 
+# Minio对象存储配置
+minio:
+  # 是否启用Minio
+  enabled: true
+  # Minio服务器端点
+  endpoint: localhost:9000
+  # 访问密钥
+  access-key: admin
+  # 秘密访问密钥
+  secret-key: admin123456
+  # 是否使用HTTPS
+  secure: false
+  # 连接超时时间（毫秒）
+  connect-timeout: 10000
+  # 写入超时时间（毫秒）
+  write-timeout: 60000
+  # 读取超时时间（毫秒）
+  read-timeout: 10000
+  
+  # 存储桶配置
+  bucket:
+    # 默认存储桶
+    name: music-server
+    # 音乐文件存储桶
+    music: music-files
+    # 图片文件存储桶
+    image: image-files
+    # 歌词文件存储桶
+    lyric: lyric-files
+    # 临时文件存储桶
+    temp: temp-files
+    # 是否自动创建存储桶
+    auto-create: true
+    # 默认存储桶权限
+    default-policy: private
+  
+  # 文件上传配置
+  upload:
+    # 单个文件最大大小（字节），默认100MB
+    max-file-size: 104857600
+    # 允许的音乐文件类型
+    allowed-music-types:
+      - audio/mpeg
+      - audio/mp3
+      - audio/wav
+      - audio/flac
+      - audio/aac
+      - audio/ogg
+      - audio/m4a
+    # 允许的图片文件类型
+    allowed-image-types:
+      - image/jpeg
+      - image/jpg
+      - image/png
+      - image/gif
+      - image/webp
+      - image/bmp
+    # 允许的歌词文件类型
+    allowed-lyric-types:
+      - text/plain
+      - application/x-subrip
+      - text/lrc
+    # 文件名生成策略：uuid、timestamp、original
+    filename-strategy: uuid
+    # 是否保留原始文件扩展名
+    keep-original-extension: true
+    # 文件上传路径模板
+    path-template: "{type}/{year}/{month}/{day}"
+    # 预签名URL有效期（秒）
+    presigned-url-expiry: 3600
+
 # Knife4j接口文档配置
 knife4j:
   enable: true

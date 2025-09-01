@@ -117,6 +117,20 @@ public enum ResultCode {
     FILE_SIZE_EXCEEDED(1505, "文件大小超出限制"),
     FILE_NAME_INVALID(1506, "文件名不合法"),
     STORAGE_SPACE_INSUFFICIENT(1507, "存储空间不足"),
+    FILE_DOWNLOAD_ERROR(1508, "文件下载失败"),
+    
+    // Minio相关错误码 (1550-1599)
+    MINIO_OPERATION_ERROR(1550, "Minio操作失败"),
+    MINIO_CONNECTION_ERROR(1551, "Minio连接失败"),
+    MINIO_BUCKET_ERROR(1552, "Minio存储桶操作失败"),
+    MINIO_BUCKET_NOT_FOUND(1553, "Minio存储桶不存在"),
+    MINIO_BUCKET_ALREADY_EXISTS(1554, "Minio存储桶已存在"),
+    MINIO_OBJECT_NOT_FOUND(1555, "Minio对象不存在"),
+    MINIO_UPLOAD_ERROR(1556, "Minio文件上传失败"),
+    MINIO_DOWNLOAD_ERROR(1557, "Minio文件下载失败"),
+    MINIO_DELETE_ERROR(1558, "Minio文件删除失败"),
+    MINIO_ACCESS_DENIED(1559, "Minio访问被拒绝"),
+    MINIO_CONFIG_ERROR(1560, "Minio配置错误"),
     
     // JWT相关错误码 (1600-1699)
     JWT_TOKEN_INVALID(1601, "JWT令牌无效"),

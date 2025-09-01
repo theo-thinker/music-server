@@ -20,6 +20,29 @@ spring:
       password: 
       database: 0
 
+# Minio开发环境配置
+minio:
+  enabled: true
+  endpoint: localhost:9000
+  access-key: minioadmin
+  secret-key: minioadmin
+  secure: false
+  
+  bucket:
+    # 开发环境使用不同的存储桶名称
+    name: music-server-dev
+    music: music-files-dev
+    image: image-files-dev
+    lyric: lyric-files-dev
+    temp: temp-files-dev
+    auto-create: true
+    
+  upload:
+    # 开发环境使用较小的文件大小限制
+    max-file-size: 52428800  # 50MB
+    # 短一些的预签名URL过期时间
+    presigned-url-expiry: 1800  # 30分钟
+
 # 日志配置
 logging:
   level:
