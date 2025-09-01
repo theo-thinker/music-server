@@ -4,6 +4,21 @@
 # 环境: 开发环境
 # ========================================
 
+# 应用信息配置
+application:
+  # 应用版本
+  version: 1.0.0
+  # 应用描述
+  description: 企业级音乐播放器后端服务
+  # 开发团队
+  team: Music Server Development Team
+  # 联系邮箱
+  contact: support@musicserver.com
+  # 项目主页
+  homepage: https://github.com/musicserver/music-server
+  # 许可协议
+  license: MIT License
+
 server:
   # 服务端口配置
   port: 8080
@@ -24,6 +39,15 @@ spring:
   # 应用基本信息
   application:
     name: music-server
+    
+  # Banner配置
+  main:
+    # 启用自定义banner
+    banner-mode: console
+    # 延迟初始化
+    lazy-initialization: false
+    # 是否注册关闭钩子
+    register-shutdown-hook: true
   
   # 环境配置
   profiles:

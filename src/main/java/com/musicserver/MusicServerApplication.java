@@ -1,6 +1,8 @@
 package com.musicserver;
 
+import com.musicserver.config.BannerConfig;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.Banner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cache.annotation.EnableCaching;
@@ -48,8 +50,14 @@ public class MusicServerApplication {
             // 设置系统属性
             System.setProperty("spring.devtools.restart.enabled", "false");
             
+            // 创建Spring应用
+            SpringApplication app = new SpringApplication(MusicServerApplication.class);
+            
+            // 设置自定义Banner（可选，如果想要更高级的自定义）
+            // app.setBanner(new BannerConfig());
+            
             // 启动Spring Boot应用
-            ConfigurableApplicationContext context = SpringApplication.run(MusicServerApplication.class, args);
+            ConfigurableApplicationContext context = app.run(args);
             
             // 打印启动信息
             printStartupInfo(context);
