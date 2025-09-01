@@ -38,28 +38,40 @@ public class MinioProperties {
     private String secretKey;
 
     /**
+     * 端口号
+     * 默认9000
+     */
+    private Integer port = 9000;
+
+    /**
      * 是否启用HTTPS连接
      * 默认为false，使用HTTP连接
      */
     private Boolean secure = false;
 
     /**
-     * 连接超时时间（毫秒）
-     * 默认10秒
+     * 是否启用Minio服务
+     * 默认为true
      */
-    private Long connectTimeout = 10000L;
+    private Boolean enabled = true;
+
+    /**
+     * 连接超时时间（毫秒）
+     * 默认30秒
+     */
+    private Long connectTimeout = 30000L;
 
     /**
      * 写入超时时间（毫秒）
-     * 默认60秒
+     * 默认30秒
      */
-    private Long writeTimeout = 60000L;
+    private Long writeTimeout = 30000L;
 
     /**
      * 读取超时时间（毫秒）
-     * 默认10秒
+     * 默认30秒
      */
-    private Long readTimeout = 10000L;
+    private Long readTimeout = 30000L;
 
     /**
      * 默认存储桶配置

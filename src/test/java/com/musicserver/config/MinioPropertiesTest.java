@@ -23,7 +23,7 @@ class MinioPropertiesTest {
         minioProperties = new MinioProperties();
         
         // 设置基本配置
-        minioProperties.setEndpoint("localhost");
+        minioProperties.setEndpoint("localhost:9000");
         minioProperties.setPort(9000);
         minioProperties.setSecure(false);
         minioProperties.setAccessKey("minioadmin");
@@ -31,12 +31,12 @@ class MinioPropertiesTest {
         minioProperties.setEnabled(true);
         
         // 设置超时配置
-        minioProperties.setConnectTimeout(30000);
-        minioProperties.setReadTimeout(30000);
-        minioProperties.setWriteTimeout(30000);
+        minioProperties.setConnectTimeout(30000L);
+        minioProperties.setReadTimeout(30000L);
+        minioProperties.setWriteTimeout(30000L);
         
         // 初始化存储桶配置
-        MinioProperties.BucketConfig bucketConfig = new MinioProperties.BucketConfig();
+        MinioProperties.Bucket bucketConfig = new MinioProperties.Bucket();
         bucketConfig.setName("music-server");
         bucketConfig.setMusic("music-files");
         bucketConfig.setImage("image-files");
@@ -45,7 +45,7 @@ class MinioPropertiesTest {
         minioProperties.setBucket(bucketConfig);
         
         // 初始化上传配置
-        MinioProperties.UploadConfig uploadConfig = new MinioProperties.UploadConfig();
+        MinioProperties.Upload uploadConfig = new MinioProperties.Upload();
         uploadConfig.setMaxFileSize(100 * 1024 * 1024L); // 100MB
         uploadConfig.setFilenameStrategy("uuid");
         uploadConfig.setKeepOriginalExtension(true);
@@ -56,7 +56,7 @@ class MinioPropertiesTest {
 
     @Test
     void testBasicProperties() {
-        assertThat(minioProperties.getEndpoint()).isEqualTo("localhost");
+        assertThat(minioProperties.getEndpoint()).isEqualTo("localhost:9000");
         assertThat(minioProperties.getPort()).isEqualTo(9000);
         assertThat(minioProperties.getSecure()).isFalse();
         assertThat(minioProperties.getAccessKey()).isEqualTo("minioadmin");
@@ -66,14 +66,14 @@ class MinioPropertiesTest {
 
     @Test
     void testTimeoutProperties() {
-        assertThat(minioProperties.getConnectTimeout()).isEqualTo(30000);
-        assertThat(minioProperties.getReadTimeout()).isEqualTo(30000);
-        assertThat(minioProperties.getWriteTimeout()).isEqualTo(30000);
+        assertThat(minioProperties.getConnectTimeout()).isEqualTo(30000L);
+        assertThat(minioProperties.getReadTimeout()).isEqualTo(30000L);
+        assertThat(minioProperties.getWriteTimeout()).isEqualTo(30000L);
     }
 
     @Test
     void testBucketConfiguration() {
-        MinioProperties.BucketConfig bucketConfig = minioProperties.getBucket();
+        MinioProperties.Bucket bucketConfig = minioProperties.getBucket();
         
         assertThat(bucketConfig).isNotNull();
         assertThat(bucketConfig.getName()).isEqualTo("music-server");
@@ -85,7 +85,7 @@ class MinioPropertiesTest {
 
     @Test
     void testUploadConfiguration() {
-        MinioProperties.UploadConfig uploadConfig = minioProperties.getUpload();
+        MinioProperties.Upload uploadConfig = minioProperties.getUpload();
         
         assertThat(uploadConfig).isNotNull();
         assertThat(uploadConfig.getMaxFileSize()).isEqualTo(100 * 1024 * 1024L);
@@ -104,6 +104,11 @@ class MinioPropertiesTest {
         minioProperties.setSecure(true);
         fullEndpoint = minioProperties.getFullEndpoint();
         assertThat(fullEndpoint).isEqualTo("https://localhost:9000");
+        
+        // 测试已经包含协议的endpoint
+        minioProperties.setEndpoint("http://minio.example.com:9000");
+        fullEndpoint = minioProperties.getFullEndpoint();
+        assertThat(fullEndpoint).isEqualTo("http://minio.example.com:9000");
     }
 
     @Test
@@ -131,14 +136,14 @@ class MinioPropertiesTest {
         assertThat(defaultProperties.getPort()).isEqualTo(9000);
         assertThat(defaultProperties.getSecure()).isFalse();
         assertThat(defaultProperties.getEnabled()).isTrue();
-        assertThat(defaultProperties.getConnectTimeout()).isEqualTo(30000);
-        assertThat(defaultProperties.getReadTimeout()).isEqualTo(30000);
-        assertThat(defaultProperties.getWriteTimeout()).isEqualTo(30000);
+        assertThat(defaultProperties.getConnectTimeout()).isEqualTo(30000L);
+        assertThat(defaultProperties.getReadTimeout()).isEqualTo(30000L);
+        assertThat(defaultProperties.getWriteTimeout()).isEqualTo(30000L);
     }
 
     @Test
     void testBucketConfigDefaults() {
-        MinioProperties.BucketConfig bucketConfig = new MinioProperties.BucketConfig();
+        MinioProperties.Bucket bucketConfig = new MinioProperties.Bucket();
         
         assertThat(bucketConfig.getName()).isEqualTo("music-server");
         assertThat(bucketConfig.getMusic()).isEqualTo("music-files");
@@ -149,13 +154,13 @@ class MinioPropertiesTest {
 
     @Test
     void testUploadConfigDefaults() {
-        MinioProperties.UploadConfig uploadConfig = new MinioProperties.UploadConfig();
+        MinioProperties.Upload uploadConfig = new MinioProperties.Upload();
         
         assertThat(uploadConfig.getMaxFileSize()).isEqualTo(100 * 1024 * 1024L);
         assertThat(uploadConfig.getFilenameStrategy()).isEqualTo("uuid");
         assertThat(uploadConfig.getKeepOriginalExtension()).isTrue();
         assertThat(uploadConfig.getPathTemplate()).isEqualTo("{type}/{year}/{month}/{day}");
-        assertThat(uploadConfig.getPresignedUrlExpiry()).isEqualTo(7200);
+        assertThat(uploadConfig.getPresignedUrlExpiry()).isEqualTo(3600);
         
         // 测试默认允许的文件类型
         assertThat(uploadConfig.getAllowedMusicTypes()).isNotEmpty();
@@ -165,7 +170,7 @@ class MinioPropertiesTest {
 
     @Test
     void testAllowedFileTypes() {
-        MinioProperties.UploadConfig uploadConfig = minioProperties.getUpload();
+        MinioProperties.Upload uploadConfig = minioProperties.getUpload();
         
         // 测试音乐文件类型
         assertThat(uploadConfig.getAllowedMusicTypes())
@@ -177,7 +182,7 @@ class MinioPropertiesTest {
         
         // 测试歌词文件类型
         assertThat(uploadConfig.getAllowedLyricTypes())
-                .contains("text/plain", "application/json");
+                .contains("text/plain", "text/lrc");
     }
 
     @Test

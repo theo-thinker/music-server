@@ -11,7 +11,11 @@ version = "1.0.0"
 description = "企业级音乐播放器后端服务"
 
 java {
+    toolchain{
+        languageVersion.set(JavaLanguageVersion.of(21))
+    }
     sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
 }
 
 configurations {
@@ -38,6 +42,8 @@ dependencies {
 
     // JWT 认证依赖
     implementation("io.jsonwebtoken:jjwt-api:0.12.7")
+    implementation("org.springframework.boot:spring-boot-starter-websocket")
+    "developmentOnly"("org.springframework.boot:spring-boot-devtools")
     runtimeOnly("io.jsonwebtoken:jjwt-impl:0.12.7")
     runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.12.7")
 

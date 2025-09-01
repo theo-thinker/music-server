@@ -334,6 +334,52 @@ app:
     # 播放历史保留天数
     history-keep-days: 365
 
+# WebSocket配置
+websocket:
+  # 是否启用WebSocket
+  enabled: true
+  # 连接配置
+  connection:
+    # 最大连接数
+    max-connections: 1000
+    # 连接超时时间（毫秒）
+    connect-timeout: 30000
+    # 会话超时时间（分钟）
+    session-timeout: 30
+  # 消息配置
+  message:
+    # 最大消息大小（字节）
+    max-size: 1048576
+    # 消息缓冲区大小
+    buffer-size: 8192
+    # 心跳间隔（秒）
+    heartbeat-interval: 30
+  # 房间配置
+  room:
+    # 房间最大成员数
+    max-members: 50
+    # 房间过期时间（分钟）
+    expire-time: 60
+    # 房间清理间隔（分钟）
+    cleanup-interval: 10
+  # 通知配置
+  notification:
+    # 通知过期时间（小时）
+    expire-time: 24
+    # 用户最大通知数
+    max-per-user: 50
+  # STOMP配置
+  stomp:
+    # 应用程序目标前缀
+    app-destination-prefix: /app
+    # 用户目标前缀
+    user-destination-prefix: /user
+    # 代理目标前缀
+    broker-relay:
+      - /topic
+      - /queue
+      - /user
+
 # 健康检查配置
 management:
   endpoints:
