@@ -392,3 +392,169 @@ management:
   info:
     env:
       enabled: true
+
+# 限流配置
+rate-limit:
+  # 启用限流功能
+  enabled: true
+  # 启用限流日志
+  enable-log: true
+  # 启用限流监控
+  enable-monitor: true
+  # 限流key前缀
+  key-prefix: rate_limit
+  # 默认限流策略
+  default-strategy: sliding_window
+  # 默认限流类型
+  default-type: global
+  # 默认限流次数
+  default-limit: 100
+  # 默认时间窗口（秒）
+  default-period: 60
+  
+  # Redis配置
+  redis:
+    # Redis Key过期时间（秒）
+    expire-time: 7200
+    # Lua脚本缓存时间（秒）
+    script-cache-time: 3600
+    # Redis连接超时时间（毫秒）
+    connection-timeout: 5000
+    # Redis执行超时时间（毫秒）
+    command-timeout: 3000
+    # 启用Redis管道
+    enable-pipeline: false
+    # 管道批量大小
+    pipeline-batch-size: 100
+  
+  # 全局限流配置
+  global:
+    enabled: true
+    limit: 10000
+    period: 60
+    strategy: sliding_window
+  
+  # IP限流配置
+  ip:
+    enabled: true
+    limit: 1000
+    period: 60
+    strategy: sliding_window
+    # IP白名单
+    whitelist:
+      - 127.0.0.1
+      - ::1
+      - localhost
+    # IP黑名单
+    blacklist: []
+    # 启用地理位置限流
+    enable-geo-limit: false
+  
+  # 用户限流配置
+  user:
+    enabled: true
+    limit: 500
+    period: 60
+    strategy: token_bucket
+    # 角色限流配置
+    roles:
+      ADMIN:
+        limit: 2000
+        period: 60
+        strategy: token_bucket
+      USER:
+        limit: 500
+        period: 60
+        strategy: sliding_window
+      GUEST:
+        limit: 100
+        period: 60
+        strategy: fixed_window
+  
+  # API限流配置
+  api:
+    enabled: true
+    limit: 200
+    period: 60
+    strategy: fixed_window
+    # 特定API限流配置
+    specific-apis:
+      login:
+        pattern: /api/auth/login
+        limit: 5
+        period: 300  # 5分钟
+        strategy: fixed_window
+        enabled: true
+      register:
+        pattern: /api/auth/register
+        limit: 3
+        period: 600  # 10分钟
+        strategy: fixed_window
+        enabled: true
+      upload:
+        pattern: /api/file/upload
+        limit: 50
+        period: 60
+        strategy: token_bucket
+        enabled: true
+  
+  # 热点数据限流配置
+  hotspot:
+    enabled: true
+    # 热点检测阈值
+    detection-threshold: 200
+    # 热点检测时间窗口（秒）
+    detection-window: 300
+    # 热点限流阈值
+    hotspot-limit: 50
+    # 热点限流时间窗口（秒）
+    hotspot-period: 60
+    # 热点数据过期时间（秒）
+    hotspot-expire-time: 3600
+    # 最大热点数据数量
+    max-hotspots: 1000
+  
+  # 策略配置
+  strategy:
+    # 滑动窗口配置
+    sliding-window:
+      default-slices: 60
+      max-slices: 3600
+      min-slices: 10
+    # 令牌桶配置
+    token-bucket:
+      default-capacity: 100
+      default-refill-rate: 10.0
+      default-warmup-period: 0
+      max-capacity: 10000
+      max-refill-rate: 1000.0
+    # 漏桶配置
+    leaky-bucket:
+      default-capacity: 100
+      default-leak-rate: 10.0
+      max-capacity: 10000
+      max-leak-rate: 1000.0
+    # 固定窗口配置
+    fixed-window:
+      default-window-size: 60
+      max-window-size: 3600
+      min-window-size: 1
+    # 计数器配置
+    counter:
+      default-reset-interval: 60
+      max-reset-interval: 86400
+      min-reset-interval: 1
+  
+  # 自定义限流规则
+  custom-rules:
+    api-heavy:
+      name: 重要API限流规则
+      key-expression: "'api_heavy_' + #request.getRequestURI()"
+      limit: 50
+      period: 60
+      strategy: token_bucket
+      type: api
+      condition: "#request.getRequestURI().contains('/api/heavy/')"
+      enabled: true
+      priority: 1
+      description: 针对重要API的特殊限流规则

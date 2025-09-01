@@ -2,6 +2,8 @@ package com.musicserver.exception;
 
 import com.musicserver.common.Result;
 import com.musicserver.common.ResultCode;
+import com.musicserver.ratelimit.exception.RateLimitExceededException;
+import com.musicserver.ratelimit.exception.RateLimitConfigException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.DuplicateKeyException;
@@ -54,6 +56,43 @@ public class GlobalExceptionHandler {
     public Result<Void> handleBusinessException(BusinessException e, HttpServletRequest request) {
         log.warn("业务异常：{}, 请求URL: {}", e.getMessage(), request.getRequestURI());
         return Result.error(e.getCode(), e.getMessage());
+    }
+    
+    /**
+     * 处理限流异常
+     * 
+     * @param e 限流异常
+     * @param request HTTP请求
+     * @return 统一响应结果
+     */
+    @ExceptionHandler(RateLimitExceededException.class)
+    @ResponseStatus(HttpStatus.TOO_MANY_REQUESTS)
+    public Result<Void> handleRateLimitExceededException(RateLimitExceededException e, HttpServletRequest request) {
+        log.warn("限流异常：{}, 请求URL: {}, 剩余配额: {}/{}, 重置时间: {}秒后, 热点: {}", 
+                e.getMessage(), request.getRequestURI(), e.getRemaining(), e.getLimit(), 
+                e.getSecondsToReset(), e.isHotspot());
+        
+        // 在响应头中添加限流信息
+        if (e.getRateLimitResult() != null) {
+            // 可以通过ThreadLocal或其他方式传递给ResponseBodyAdvice来设置响应头
+            // 这里暂时只在日志中记录
+        }
+        
+        return Result.error(e.getErrorCode(), e.getMessage());
+    }
+    
+    /**
+     * 处理限流配置异常
+     * 
+     * @param e 限流配置异常
+     * @param request HTTP请求
+     * @return 统一响应结果
+     */
+    @ExceptionHandler(RateLimitConfigException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public Result<Void> handleRateLimitConfigException(RateLimitConfigException e, HttpServletRequest request) {
+        log.error("限流配置异常：{}, 请求URL: {}", e.getMessage(), request.getRequestURI());
+        return Result.error(ResultCode.INTERNAL_ERROR.getCode(), "系统配置错误，请联系管理员");
     }
     
     /**
