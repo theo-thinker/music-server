@@ -2,6 +2,8 @@ package com.musicserver.exception;
 
 import com.musicserver.common.Result;
 import com.musicserver.common.ResultCode;
+import com.musicserver.ip.exception.IpLocationException;
+import com.musicserver.ip.exception.IpValidationException;
 import com.musicserver.ratelimit.exception.RateLimitExceededException;
 import com.musicserver.ratelimit.exception.RateLimitConfigException;
 import lombok.extern.slf4j.Slf4j;
@@ -93,6 +95,58 @@ public class GlobalExceptionHandler {
     public Result<Void> handleRateLimitConfigException(RateLimitConfigException e, HttpServletRequest request) {
         log.error("限流配置异常：{}, 请求URL: {}", e.getMessage(), request.getRequestURI());
         return Result.error(ResultCode.INTERNAL_ERROR.getCode(), "系统配置错误，请联系管理员");
+    }
+
+    /**
+     * 处理IP定位异常
+     * 
+     * @param e IP定位异常
+     * @param request HTTP请求
+     * @return 统一响应结果
+     */
+    @ExceptionHandler(IpLocationException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public Result<Void> handleIpLocationException(IpLocationException e, HttpServletRequest request) {
+        log.error("IP定位异常：{}, 请求URL: {}, 错误代码: {}", 
+                e.getMessage(), request.getRequestURI(), e.getErrorCode());
+        
+        String errorMessage = "IP定位服务异常";
+        if ("IP_QUERY_TIMEOUT".equals(e.getErrorCode())) {
+            errorMessage = "IP查询超时，请稍后重试";
+        } else if ("IP_SERVICE_UNAVAILABLE".equals(e.getErrorCode())) {
+            errorMessage = "IP定位服务暂时不可用";
+        } else if ("IP_ACCESS_DENIED".equals(e.getErrorCode())) {
+            errorMessage = "IP访问被拒绝";
+        }
+        
+        return Result.error(ResultCode.INTERNAL_ERROR.getCode(), errorMessage);
+    }
+
+    /**
+     * 处理IP验证异常
+     * 
+     * @param e IP验证异常
+     * @param request HTTP请求
+     * @return 统一响应结果
+     */
+    @ExceptionHandler(IpValidationException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public Result<Void> handleIpValidationException(IpValidationException e, HttpServletRequest request) {
+        log.warn("IP验证异常：{}, 请求URL: {}, 无效IP: {}", 
+                e.getMessage(), request.getRequestURI(), e.getInvalidIp());
+        
+        String errorMessage = "IP地址格式错误";
+        if ("IP_NULL_OR_EMPTY".equals(e.getErrorCode())) {
+            errorMessage = "IP地址不能为空";
+        } else if ("IP_INVALID_FORMAT".equals(e.getErrorCode())) {
+            errorMessage = "IP地址格式不正确";
+        } else if ("IP_BLACKLISTED".equals(e.getErrorCode())) {
+            errorMessage = "IP地址已被封禁";
+        } else if ("IP_PRIVATE_ADDRESS".equals(e.getErrorCode())) {
+            errorMessage = "不允许访问私有IP地址";
+        }
+        
+        return Result.error(ResultCode.BAD_REQUEST.getCode(), errorMessage);
     }
     
     /**

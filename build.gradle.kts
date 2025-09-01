@@ -71,6 +71,12 @@ dependencies {
     compileOnly("org.projectlombok:lombok:1.18.38")
     annotationProcessor("org.projectlombok:lombok:1.18.38")
 
+    // IP 地理位置查询
+    implementation("org.lionsoul:ip2region:2.7.0")
+
+    // 本地缓存
+    implementation("com.github.ben-manes.caffeine:caffeine:3.1.8")
+
     // Jackson JSON 处理
     implementation("com.fasterxml.jackson.core:jackson-databind")
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
