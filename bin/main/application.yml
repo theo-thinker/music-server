@@ -1,0 +1,277 @@
+# ========================================
+# 音乐播放器后端服务配置文件
+# 版本: 1.0.0
+# 环境: 开发环境
+# ========================================
+
+server:
+  # 服务端口配置
+  port: 8080
+  servlet:
+    context-path: /api
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
+  # Tomcat配置
+  tomcat:
+    uri-encoding: UTF-8
+    max-threads: 200
+    min-spare-threads: 10
+    connection-timeout: 5000ms
+
+spring:
+  # 应用基本信息
+  application:
+    name: music-server
+  
+  # 环境配置
+  profiles:
+    active: dev
+  
+  # 数据源配置
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/music_server?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
+    username: root
+    password: root
+    # Druid连接池配置
+    druid:
+      # 初始连接数
+      initial-size: 10
+      # 最小连接池数量
+      min-idle: 10
+      # 最大连接池数量
+      max-active: 20
+      # 配置获取连接等待超时的时间
+      max-wait: 60000
+      # 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒
+      time-between-eviction-runs-millis: 60000
+      # 配置一个连接在池中最小生存的时间，单位是毫秒
+      min-evictable-idle-time-millis: 300000
+      # 配置一个连接在池中最大生存的时间，单位是毫秒
+      max-evictable-idle-time-millis: 900000
+      # 配置检测连接是否有效
+      validation-query: SELECT 1 FROM DUAL
+      test-while-idle: true
+      test-on-borrow: false
+      test-on-return: false
+      # 打开PSCache，并且指定每个连接上PSCache的大小
+      pool-prepared-statements: true
+      max-pool-prepared-statement-per-connection-size: 20
+      # 配置监控统计拦截的filters，去掉后监控界面sql无法统计，'wall'用于防火墙
+      filters: stat,wall,slf4j
+      # 通过connectProperties属性来打开mergeSql功能；慢SQL记录
+      connection-properties: druid.stat.mergeSql\=true;druid.stat.slowSqlMillis\=5000
+      # 配置DruidStatFilter
+      web-stat-filter:
+        enabled: true
+        url-pattern: "/*"
+        exclusions: "*.js,*.gif,*.jpg,*.bmp,*.png,*.css,*.ico,/druid/*"
+      # 配置DruidStatViewServlet
+      stat-view-servlet:
+        enabled: true
+        url-pattern: "/druid/*"
+        # IP白名单(没有配置或者为空，则允许所有访问)
+        allow: 127.0.0.1,192.168.163.1
+        # IP黑名单 (存在共同时，deny优先于allow)
+        deny: 192.168.1.73
+        # 禁用HTML页面上的"Reset All"功能
+        reset-enable: false
+        # 登录名
+        login-username: admin
+        # 登录密码
+        login-password: 123456
+  
+  # Redis配置
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      password: 
+      database: 0
+      timeout: 5000ms
+      lettuce:
+        pool:
+          # 连接池最大连接数
+          max-active: 8
+          # 连接池最大阻塞等待时间（使用负值表示没有限制）
+          max-wait: -1ms
+          # 连接池中的最大空闲连接
+          max-idle: 8
+          # 连接池中的最小空闲连接
+          min-idle: 0
+        shutdown-timeout: 100ms
+  
+  # Jackson配置
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
+    serialization:
+      write-dates-as-timestamps: false
+      fail-on-empty-beans: false
+    deserialization:
+      fail-on-unknown-properties: false
+    default-property-inclusion: non_null
+  
+  # 文件上传配置
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 100MB
+      max-request-size: 100MB
+  
+  # 国际化配置
+  messages:
+    basename: i18n/messages
+    encoding: UTF-8
+    cache-duration: 3600
+
+# MyBatis Plus配置
+mybatis-plus:
+  # 配置扫描通用枚举，支持统一注入自定义转换器
+  type-enums-package: com.musicserver.enums
+  # 启动时是否检查MyBatis XML文件的存在
+  check-config-location: true
+  # MyBatis原生配置
+  configuration:
+    # 字段名称下划线转驼峰命名
+    map-underscore-to-camel-case: true
+    cache-enabled: true
+    call-setters-on-nulls: true
+    jdbc-type-for-null: 'null'
+    # 打印SQL语句到控制台
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  global-config:
+    # 关闭MP3.0自带的banner
+    banner: true
+    db-config:
+      # 主键类型（AUTO:"数据库ID自增" INPUT:"用户输入ID" ID_WORKER:"全局唯一ID" UUID:"全局唯一ID"）
+      id-type: AUTO
+      # 字段策略（IGNORED:"忽略判断" NOT_NULL:"非NULL判断" NOT_EMPTY:"非空判断"）
+      insert-strategy: NOT_NULL
+      update-strategy: NOT_NULL
+      select-strategy: NOT_NULL
+      # 驼峰下划线转换
+      table-underline: true
+      # 逻辑删除配置
+      logic-delete-field: deleted
+      logic-delete-value: 1
+      logic-not-delete-value: 0
+  # 搜索指定包别名
+  type-aliases-package: com.musicserver.entity
+  # 配置mapper的扫描，找到所有的mapper.xml映射文件
+  mapper-locations: classpath:mapper/*.xml
+
+# 日志配置
+logging:
+  config: classpath:logback-spring.xml
+  level:
+    com.musicserver: debug
+    org.springframework.security: debug
+    org.mybatis: debug
+    com.baomidou.mybatisplus: debug
+  pattern:
+    console: "%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n"
+
+# JWT配置
+jwt:
+  # JWT密钥
+  secret: musicServerJwtSecretKey2025MusicPlayerBackendService
+  # JWT过期时间（秒），默认7天
+  expiration: 604800
+  # JWT刷新时间（秒），默认3天
+  refresh-expiration: 259200
+  # JWT请求头
+  header: Authorization
+  # JWT令牌前缀
+  token-prefix: "Bearer "
+  # 是否允许刷新令牌
+  allow-refresh: true
+
+# Knife4j接口文档配置
+knife4j:
+  enable: true
+  openapi:
+    title: 音乐播放器后端服务API
+    description: 企业级音乐播放器APP后端服务接口文档
+    email: developer@musicserver.com
+    concat: 开发团队
+    url: https://www.musicserver.com
+    version: v1.0.0
+    license: Apache 2.0
+    license-url: https://www.apache.org/licenses/LICENSE-2.0
+    terms-of-service-url: https://www.musicserver.com/terms
+  setting:
+    language: zh_cn
+    enable-version: true
+    enable-swagger-models: true
+    enable-document-manage: true
+    swagger-model-name: 实体类列表
+    enable-reload-cache-parameter: true
+    enable-after-script: true
+    enable-filter-multipart-api-method-type: POST
+    enable-filter-multipart-apis: false
+    enable-request-cache: true
+    enable-host: false
+    enable-host-text: 192.168.0.193:8080
+
+# 应用自定义配置
+app:
+  # 文件存储配置
+  file:
+    # 文件上传路径
+    upload-path: /data/music-server/uploads/
+    # 静态资源访问路径
+    static-access-path: /static/**
+    # 静态资源映射路径
+    static-location: file:/data/music-server/uploads/
+    # 允许的文件类型
+    allowed-types: mp3,flac,wav,aac,m4a,ogg,jpg,jpeg,png,gif,webp,lrc,txt
+    # 最大文件大小（MB）
+    max-size: 100
+  
+  # 缓存配置
+  cache:
+    # 默认缓存时间（秒）
+    default-ttl: 3600
+    # 用户信息缓存时间（秒）
+    user-ttl: 1800
+    # 音乐信息缓存时间（秒）
+    music-ttl: 7200
+    # 播放列表缓存时间（秒）
+    playlist-ttl: 3600
+  
+  # 安全配置
+  security:
+    # 密码加密轮数
+    bcrypt-rounds: 10
+    # 登录失败最大次数
+    max-login-attempts: 5
+    # 账户锁定时间（秒）
+    account-lock-duration: 1800
+  
+  # 业务配置
+  business:
+    # 推荐音乐数量
+    recommend-limit: 20
+    # 热门音乐数量
+    hot-music-limit: 50
+    # 搜索结果限制
+    search-limit: 100
+    # 播放历史保留天数
+    history-keep-days: 365
+
+# 健康检查配置
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  endpoint:
+    health:
+      show-details: when_authorized
+  info:
+    env:
+      enabled: true

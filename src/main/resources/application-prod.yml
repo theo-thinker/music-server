@@ -1,0 +1,34 @@
+# ========================================
+# 生产环境专用配置
+# ========================================
+spring:
+  # 生产环境数据源配置
+  datasource:
+    url: jdbc:mysql://prod-mysql:3306/music_server?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=Asia/Shanghai
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    druid:
+      initial-size: 20
+      min-idle: 20
+      max-active: 100
+  
+  # 生产环境Redis配置
+  data:
+    redis:
+      host: ${REDIS_HOST:prod-redis}
+      port: ${REDIS_PORT:6379}
+      password: ${REDIS_PASSWORD}
+
+# 生产环境日志配置
+logging:
+  level:
+    root: WARN
+    com.musicserver: INFO
+  file:
+    name: /var/log/music-server/application.log
+
+# 生产环境文件路径
+app:
+  file:
+    upload-path: /data/music-server/uploads/
+    static-location: file:/data/music-server/uploads/
