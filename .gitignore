@@ -27,9 +27,12 @@ build/
 
 logs/
 
-idea
-idea/
+.idea
+.idea/
 
 .vscode
 .gradle
 .gradle/
+
+bin
+bin/

@@ -3,16 +3,19 @@
     <!-- 定义日志输出格式 -->
     <property name="LOG_PATTERN" value="%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n"/>
     <property name="LOG_FILE_PATH" value="logs/music-server"/>
+    
+    <!-- 控制台日志格式 -->
+    <property name="CONSOLE_LOG_PATTERN" value="%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"/>
 
     <!-- 控制台输出 -->
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
-            <pattern>${LOG_PATTERN}</pattern>
+            <pattern>${CONSOLE_LOG_PATTERN}</pattern>
             <charset>UTF-8</charset>
         </encoder>
     </appender>
 
-    <!-- 文件输出 -->
+    <!-- 普通日志文件输出 -->
     <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>${LOG_FILE_PATH}/application.log</file>
         <encoder>
@@ -20,12 +23,13 @@
             <charset>UTF-8</charset>
         </encoder>
         
-        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+        <!-- 使用SizeAndTimeBasedRollingPolicy替代已弃用的SizeAndTimeBasedFNATP -->
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
             <fileNamePattern>${LOG_FILE_PATH}/application.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
-            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
-                <maxFileSize>50MB</maxFileSize>
-            </timeBasedFileNamingAndTriggeringPolicy>
+            <maxFileSize>50MB</maxFileSize>
             <maxHistory>30</maxHistory>
+            <totalSizeCap>2GB</totalSizeCap>
+            <cleanHistoryOnStart>true</cleanHistoryOnStart>
         </rollingPolicy>
     </appender>
 
@@ -37,31 +41,113 @@
             <charset>UTF-8</charset>
         </encoder>
         
-        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+        <!-- 使用SizeAndTimeBasedRollingPolicy替代已弃用的SizeAndTimeBasedFNATP -->
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
             <fileNamePattern>${LOG_FILE_PATH}/error.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
-            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
-                <maxFileSize>50MB</maxFileSize>
-            </timeBasedFileNamingAndTriggeringPolicy>
-            <maxHistory>30</maxHistory>
+            <maxFileSize>20MB</maxFileSize>
+            <maxHistory>60</maxHistory>
+            <totalSizeCap>1GB</totalSizeCap>
+            <cleanHistoryOnStart>true</cleanHistoryOnStart>
         </rollingPolicy>
         
+        <!-- 只记录ERROR级别的日志 -->
         <filter class="ch.qos.logback.classic.filter.LevelFilter">
             <level>ERROR</level>
             <onMatch>ACCEPT</onMatch>
             <onMismatch>DENY</onMismatch>
         </filter>
     </appender>
+    
+    <!-- 警告日志文件输出 -->
+    <appender name="WARN_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_FILE_PATH}/warn.log</file>
+        <encoder>
+            <pattern>${LOG_PATTERN}</pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+        
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_FILE_PATH}/warn.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <maxFileSize>20MB</maxFileSize>
+            <maxHistory>30</maxHistory>
+            <totalSizeCap>500MB</totalSizeCap>
+            <cleanHistoryOnStart>true</cleanHistoryOnStart>
+        </rollingPolicy>
+        
+        <!-- 只记录WARN级别的日志 -->
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>WARN</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+    </appender>
+
+    <!-- 异步日志 appender，提高性能 -->
+    <appender name="ASYNC_FILE" class="ch.qos.logback.classic.AsyncAppender">
+        <appender-ref ref="FILE"/>
+        <queueSize>1024</queueSize>
+        <discardingThreshold>0</discardingThreshold>
+        <includeCallerData>false</includeCallerData>
+    </appender>
+    
+    <appender name="ASYNC_ERROR_FILE" class="ch.qos.logback.classic.AsyncAppender">
+        <appender-ref ref="ERROR_FILE"/>
+        <queueSize>256</queueSize>
+        <discardingThreshold>0</discardingThreshold>
+        <includeCallerData>true</includeCallerData>
+    </appender>
+
+    <!-- 异步WARN文件日志 appender -->
+    <appender name="ASYNC_WARN_FILE" class="ch.qos.logback.classic.AsyncAppender">
+        <appender-ref ref="WARN_FILE"/>
+        <queueSize>256</queueSize>
+        <discardingThreshold>0</discardingThreshold>
+        <includeCallerData>false</includeCallerData>
+    </appender>
 
     <!-- 开发环境配置 -->
     <springProfile name="dev">
-        <logger name="com.musicserver" level="DEBUG"/>
-        <logger name="org.springframework.security" level="DEBUG"/>
-        <logger name="org.springframework.web" level="DEBUG"/>
-        <logger name="org.mybatis" level="DEBUG"/>
+        <logger name="com.musicserver" level="DEBUG" additivity="false">
+            <appender-ref ref="CONSOLE"/>
+            <appender-ref ref="ASYNC_FILE"/>
+        </logger>
+        
+        <logger name="org.springframework.security" level="DEBUG" additivity="false">
+            <appender-ref ref="CONSOLE"/>
+        </logger>
+        
+        <logger name="org.springframework.web" level="DEBUG" additivity="false">
+            <appender-ref ref="CONSOLE"/>
+        </logger>
+        
+        <logger name="org.mybatis" level="DEBUG" additivity="false">
+            <appender-ref ref="CONSOLE"/>
+        </logger>
+        
+        <logger name="com.baomidou.mybatisplus" level="DEBUG" additivity="false">
+            <appender-ref ref="CONSOLE"/>
+        </logger>
         
         <root level="INFO">
             <appender-ref ref="CONSOLE"/>
-            <appender-ref ref="FILE"/>
+            <appender-ref ref="ASYNC_FILE"/>
+            <appender-ref ref="ASYNC_ERROR_FILE"/>
+            <appender-ref ref="ASYNC_WARN_FILE"/>
+        </root>
+    </springProfile>
+
+    <!-- 测试环境配置 -->
+    <springProfile name="test">
+        <logger name="com.musicserver" level="INFO"/>
+        <logger name="org.springframework.security" level="INFO"/>
+        <logger name="org.springframework.web" level="INFO"/>
+        <logger name="org.mybatis" level="INFO"/>
+        
+        <root level="INFO">
+            <appender-ref ref="CONSOLE"/>
+            <appender-ref ref="ASYNC_FILE"/>
+            <appender-ref ref="ASYNC_ERROR_FILE"/>
+            <appender-ref ref="ASYNC_WARN_FILE"/>
         </root>
     </springProfile>
 
@@ -71,20 +157,29 @@
         <logger name="org.springframework.security" level="WARN"/>
         <logger name="org.springframework.web" level="WARN"/>
         <logger name="org.mybatis" level="WARN"/>
+        <logger name="com.baomidou.mybatisplus" level="WARN"/>
+        
+        <!-- 关闭一些不必要的日志 -->
+        <logger name="org.apache.catalina" level="WARN"/>
+        <logger name="org.springframework.boot" level="WARN"/>
+        <logger name="org.hibernate" level="WARN"/>
         
         <root level="INFO">
-            <appender-ref ref="FILE"/>
-            <appender-ref ref="ERROR_FILE"/>
+            <appender-ref ref="ASYNC_FILE"/>
+            <appender-ref ref="ASYNC_ERROR_FILE"/>
+            <appender-ref ref="ASYNC_WARN_FILE"/>
         </root>
     </springProfile>
 
     <!-- 默认配置 -->
-    <springProfile name="!dev &amp; !prod">
+    <springProfile name="!dev &amp; !test &amp; !prod">
         <logger name="com.musicserver" level="INFO"/>
         
         <root level="INFO">
             <appender-ref ref="CONSOLE"/>
-            <appender-ref ref="FILE"/>
+            <appender-ref ref="ASYNC_FILE"/>
+            <appender-ref ref="ASYNC_ERROR_FILE"/>
+            <appender-ref ref="ASYNC_WARN_FILE"/>
         </root>
     </springProfile>
 

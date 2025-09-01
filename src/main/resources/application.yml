@@ -39,7 +39,7 @@ spring:
   # 应用基本信息
   application:
     name: music-server
-    
+
   # Banner配置
   main:
     # 启用自定义banner
@@ -48,6 +48,27 @@ spring:
     lazy-initialization: false
     # 是否注册关闭钩子
     register-shutdown-hook: true
+  
+  # DevTools开发工具配置
+  devtools:
+    # 重启配置
+    restart:
+      # 在开发环境下启用热重载
+      enabled: false
+      # 排除不需要重启的目录
+      exclude: static/**,public/**,META-INF/maven/**,META-INF/resources/**
+      # 触发文件
+      trigger-file: .reloadtrigger
+    # 远程开发支持
+    remote:
+      # 生产环境下禁用远程开发
+      secret: musicserver2024
+      restart:
+        enabled: false
+    # LiveReload配置
+    livereload:
+      enabled: true
+      port: 35729
   
   # 环境配置
   profiles:
@@ -112,7 +133,7 @@ spring:
     redis:
       host: localhost
       port: 6379
-      password: 
+      password:
       database: 0
       timeout: 5000ms
       lettuce:
@@ -482,7 +503,7 @@ ip-location:
     # 是否启用IP黑名单
     enable-blacklist: false
     # IP黑名单
-    blacklist: []
+    blacklist: [ ]
     # 是否启用内网IP过滤
     filter-private-ip: false
     # 是否启用风险IP检测
@@ -564,7 +585,7 @@ rate-limit:
       - ::1
       - localhost
     # IP黑名单
-    blacklist: []
+    blacklist: [ ]
     # 启用地理位置限流
     enable-geo-limit: false
   

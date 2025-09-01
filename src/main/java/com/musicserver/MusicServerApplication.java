@@ -47,8 +47,8 @@ public class MusicServerApplication {
      */
     public static void main(String[] args) {
         try {
-            // 设置系统属性
-            System.setProperty("spring.devtools.restart.enabled", "false");
+            // 优化DevTools配置，避免SilentExitException
+            configureDevTools(args);
             
             // 创建Spring应用
             SpringApplication app = new SpringApplication(MusicServerApplication.class);
@@ -66,6 +66,55 @@ public class MusicServerApplication {
             log.error("应用启动失败", e);
             System.exit(1);
         }
+    }
+    
+    /**
+     * 配置DevTools，避免启动冲突
+     * 
+     * @param args 命令行参数
+     */
+    private static void configureDevTools(String[] args) {
+        // 只在生产环境下禁用DevTools
+        if (isProductionEnvironment(args)) {
+            System.setProperty("spring.devtools.restart.enabled", "false");
+            System.setProperty("spring.devtools.livereload.enabled", "false");
+            log.info("生产环境：已禁用DevTools功能");
+        } else {
+            // 开发环境下优化DevTools配置
+            System.setProperty("spring.devtools.restart.poll-interval", "3000");
+            System.setProperty("spring.devtools.restart.quiet-period", "1000");
+            // 避免SilentExitException的配置
+            System.setProperty("spring.devtools.restart.log-condition-evaluation-delta", "false");
+            log.debug("开发环境：DevTools热重载已启用");
+        }
+    }
+    
+    /**
+     * 判断是否为生产环境
+     * 
+     * @param args 命令行参数
+     * @return 是否为生产环境
+     */
+    private static boolean isProductionEnvironment(String[] args) {
+        // 检查命令行参数
+        for (String arg : args) {
+            if (arg.contains("spring.profiles.active=prod") || 
+                arg.contains("spring.profiles.active=production")) {
+                return true;
+            }
+        }
+        
+        // 检查系统属性
+        String activeProfiles = System.getProperty("spring.profiles.active");
+        if (activeProfiles != null && 
+            (activeProfiles.contains("prod") || activeProfiles.contains("production"))) {
+            return true;
+        }
+        
+        // 检查环境变量
+        String springProfilesActive = System.getenv("SPRING_PROFILES_ACTIVE");
+        return springProfilesActive != null && 
+               (springProfilesActive.contains("prod") || springProfilesActive.contains("production"));
     }
 
     /**
