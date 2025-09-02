@@ -27,10 +27,10 @@ import java.util.Map;
 
 /**
  * 文件管理控制器
- * 
+ * <p>
  * 提供文件上传、下载、删除等REST API接口
  * 支持多种文件类型和操作方式
- * 
+ *
  * @author Music Server Development Team
  * @version 1.0.0
  * @since 2025-09-01
@@ -57,15 +57,19 @@ public class FileController {
             @ApiResponse(responseCode = "415", description = "不支持的文件类型")
     })
     public Result<FileInfoResponse> uploadFile(@Valid @ModelAttribute FileUploadRequest request) {
-        log.info("上传文件请求: fileType={}, filename={}, size={}", 
-                request.getFileType(), 
-                request.getFile().getOriginalFilename(), 
-                request.getFile().getSize());
+        log.info("上传文件请求: fileType={}, filename={}, size={}",
+                request.getFileType(),
+                request.getFile().getOriginalFilename(),
+                request.getFile().getSize()
+        );
 
         FileInfoResponse response = minioService.uploadFile(request);
-        
-        log.info("文件上传成功: fileId={}, originalFilename={}", 
-                response.getFileId(), response.getOriginalFilename());
+
+        log.info(
+                "文件上传成功: fileId={}, originalFilename={}",
+                response.getFileId(),
+                response.getOriginalFilename()
+        );
 
         return Result.success(response);
     }
@@ -77,7 +81,7 @@ public class FileController {
             @RequestParam("file") MultipartFile file,
             @Parameter(description = "文件类型", required = true, example = "music")
             @RequestParam("fileType") String fileType) {
-        
+
         log.info("简单上传文件: fileType={}, filename={}", fileType, file.getOriginalFilename());
 
         FileInfoResponse response = minioService.uploadFile(file, fileType);
@@ -91,7 +95,7 @@ public class FileController {
             @RequestParam("files") List<MultipartFile> files,
             @Parameter(description = "文件类型", required = true, example = "music")
             @RequestParam("fileType") String fileType) {
-        
+
         log.info("批量上传文件: fileType={}, count={}", fileType, files.size());
 
         List<FileInfoResponse> responses = minioService.uploadFiles(files, fileType);
@@ -108,16 +112,16 @@ public class FileController {
             @Parameter(description = "文件ID", required = true)
             @PathVariable String fileId,
             HttpServletResponse response) {
-        
+
         log.info("下载文件请求: fileId={}", fileId);
 
         try {
             // 获取文件信息
             FileInfoResponse fileInfo = minioService.getFileInfo(fileId);
-            
+
             // 设置响应头
             response.setContentType(fileInfo.getMimeType());
-            response.setHeader("Content-Disposition", 
+            response.setHeader("Content-Disposition",
                     "attachment; filename=\"" + fileInfo.getOriginalFilename() + "\"");
             response.setContentLengthLong(fileInfo.getFileSize());
 
@@ -142,7 +146,7 @@ public class FileController {
             @PathVariable String fileId,
             @Parameter(description = "链接有效期（秒）", example = "3600")
             @RequestParam(defaultValue = "3600") int expiry) {
-        
+
         log.info("获取下载链接: fileId={}, expiry={}", fileId, expiry);
 
         String downloadUrl = minioService.getPresignedDownloadUrl(fileId, expiry);
@@ -154,7 +158,7 @@ public class FileController {
     public Result<String> getPreviewUrl(
             @Parameter(description = "文件ID", required = true)
             @PathVariable String fileId) {
-        
+
         log.info("获取预览链接: fileId={}", fileId);
 
         String previewUrl = minioService.getPublicUrl(fileId);
@@ -171,11 +175,11 @@ public class FileController {
     public Result<Void> deleteFile(
             @Parameter(description = "文件ID", required = true)
             @PathVariable String fileId) {
-        
+
         log.info("删除文件请求: fileId={}", fileId);
 
         minioService.deleteFile(fileId);
-        
+
         log.info("文件删除成功: fileId={}", fileId);
         return Result.success();
     }
@@ -186,11 +190,11 @@ public class FileController {
     public Result<Void> deleteFiles(
             @Parameter(description = "文件ID列表", required = true)
             @RequestBody List<String> fileIds) {
-        
+
         log.info("批量删除文件请求: count={}", fileIds.size());
 
         minioService.deleteFiles(fileIds);
-        
+
         log.info("批量文件删除成功: count={}", fileIds.size());
         return Result.success();
     }
@@ -203,11 +207,11 @@ public class FileController {
             @RequestParam String sourceFileId,
             @Parameter(description = "目标文件ID", required = true)
             @RequestParam String targetFileId) {
-        
+
         log.info("复制文件请求: sourceFileId={}, targetFileId={}", sourceFileId, targetFileId);
 
         FileInfoResponse response = minioService.copyFile(sourceFileId, targetFileId);
-        
+
         log.info("文件复制成功: sourceFileId={}, targetFileId={}", sourceFileId, targetFileId);
         return Result.success(response);
     }
@@ -220,11 +224,11 @@ public class FileController {
             @RequestParam String sourceFileId,
             @Parameter(description = "目标文件ID", required = true)
             @RequestParam String targetFileId) {
-        
+
         log.info("移动文件请求: sourceFileId={}, targetFileId={}", sourceFileId, targetFileId);
 
         FileInfoResponse response = minioService.moveFile(sourceFileId, targetFileId);
-        
+
         log.info("文件移动成功: sourceFileId={}, targetFileId={}", sourceFileId, targetFileId);
         return Result.success(response);
     }
@@ -237,11 +241,11 @@ public class FileController {
             @PathVariable String fileId,
             @Parameter(description = "新文件名", required = true)
             @RequestParam String newName) {
-        
+
         log.info("重命名文件请求: fileId={}, newName={}", fileId, newName);
 
         FileInfoResponse response = minioService.renameFile(fileId, newName);
-        
+
         log.info("文件重命名成功: fileId={}, newName={}", fileId, newName);
         return Result.success(response);
     }
@@ -255,7 +259,7 @@ public class FileController {
     public Result<FileInfoResponse> getFileInfo(
             @Parameter(description = "文件ID", required = true)
             @PathVariable String fileId) {
-        
+
         log.debug("获取文件信息: fileId={}", fileId);
 
         FileInfoResponse response = minioService.getFileInfo(fileId);
@@ -267,7 +271,7 @@ public class FileController {
     public Result<FileDetailVO> getFileDetail(
             @Parameter(description = "文件ID", required = true)
             @PathVariable String fileId) {
-        
+
         log.debug("获取文件详细信息: fileId={}", fileId);
 
         FileDetailVO response = minioService.getFileDetail(fileId);
@@ -279,7 +283,7 @@ public class FileController {
     public Result<Map<String, Object>> getFileStats(
             @Parameter(description = "文件ID", required = true)
             @PathVariable String fileId) {
-        
+
         log.debug("获取文件统计信息: fileId={}", fileId);
 
         Map<String, Object> stats = minioService.getFileStats(fileId);
@@ -291,7 +295,7 @@ public class FileController {
     public Result<Map<String, String>> getFileMetadata(
             @Parameter(description = "文件ID", required = true)
             @PathVariable String fileId) {
-        
+
         log.debug("获取文件元数据: fileId={}", fileId);
 
         Map<String, String> metadata = minioService.getFileMetadata(fileId);
@@ -303,7 +307,7 @@ public class FileController {
     public Result<Boolean> fileExists(
             @Parameter(description = "文件ID", required = true)
             @PathVariable String fileId) {
-        
+
         log.debug("检查文件是否存在: fileId={}", fileId);
 
         boolean exists = minioService.fileExists(fileId);
@@ -323,7 +327,7 @@ public class FileController {
             @RequestParam(required = false) String prefix,
             @Parameter(description = "最大数量", example = "20")
             @RequestParam(defaultValue = "20") int maxKeys) {
-        
+
         log.debug("获取文件列表: bucketName={}, prefix={}, maxKeys={}", bucketName, prefix, maxKeys);
 
         if (bucketName == null) {
@@ -331,7 +335,7 @@ public class FileController {
         }
 
         List<FileListVO> files = minioService.listFiles(bucketName, prefix, maxKeys);
-        
+
         // 构建分页响应
         PageResponse<FileListVO> pageResponse = new PageResponse<>();
         pageResponse.setRecords(files);
@@ -350,11 +354,11 @@ public class FileController {
             @PathVariable String fileType,
             @Parameter(description = "最大数量", example = "20")
             @RequestParam(defaultValue = "20") int maxKeys) {
-        
+
         log.debug("按类型获取文件列表: fileType={}, maxKeys={}", fileType, maxKeys);
 
         List<FileListVO> files = minioService.listFilesByType(fileType, maxKeys);
-        
+
         // 构建分页响应
         PageResponse<FileListVO> pageResponse = new PageResponse<>();
         pageResponse.setRecords(files);
@@ -376,11 +380,11 @@ public class FileController {
             @RequestParam(required = false) String fileType,
             @Parameter(description = "最大数量", example = "20")
             @RequestParam(defaultValue = "20") int maxKeys) {
-        
+
         log.debug("按用户获取文件列表: userId={}, fileType={}, maxKeys={}", userId, fileType, maxKeys);
 
         List<FileListVO> files = minioService.listFilesByUser(userId, fileType, maxKeys);
-        
+
         // 构建分页响应
         PageResponse<FileListVO> pageResponse = new PageResponse<>();
         pageResponse.setRecords(files);
@@ -412,11 +416,11 @@ public class FileController {
     public Result<Void> createBucket(
             @Parameter(description = "存储桶名称", required = true)
             @PathVariable String bucketName) {
-        
+
         log.info("创建存储桶: bucketName={}", bucketName);
 
         minioService.createBucket(bucketName);
-        
+
         log.info("存储桶创建成功: bucketName={}", bucketName);
         return Result.success();
     }
@@ -427,11 +431,11 @@ public class FileController {
     public Result<Void> deleteBucket(
             @Parameter(description = "存储桶名称", required = true)
             @PathVariable String bucketName) {
-        
+
         log.info("删除存储桶: bucketName={}", bucketName);
 
         minioService.deleteBucket(bucketName);
-        
+
         log.info("存储桶删除成功: bucketName={}", bucketName);
         return Result.success();
     }
@@ -442,7 +446,7 @@ public class FileController {
     public Result<Boolean> bucketExists(
             @Parameter(description = "存储桶名称", required = true)
             @PathVariable String bucketName) {
-        
+
         log.debug("检查存储桶是否存在: bucketName={}", bucketName);
 
         boolean exists = minioService.bucketExists(bucketName);

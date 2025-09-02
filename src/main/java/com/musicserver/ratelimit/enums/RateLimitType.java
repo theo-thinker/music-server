@@ -1,20 +1,23 @@
 package com.musicserver.ratelimit.enums;
 
+import lombok.Getter;
+
 /**
  * 限流类型枚举
- * 
+ * <p>
  * 定义了限流的不同维度和类型
  * 支持多维度组合限流，提供灵活的限流策略
- * 
+ *
  * @author Music Server Development Team
  * @version 1.0.0
  * @since 2025-09-01
  */
+@Getter
 public enum RateLimitType {
 
     /**
      * 全局限流
-     * 
+     * <p>
      * 特点：
      * - 对所有请求进行统一限流
      * - 不区分用户、IP等维度
@@ -24,7 +27,7 @@ public enum RateLimitType {
 
     /**
      * IP限流
-     * 
+     * <p>
      * 特点：
      * - 基于客户端IP地址进行限流
      * - 防止单个IP恶意请求
@@ -34,7 +37,7 @@ public enum RateLimitType {
 
     /**
      * 用户限流
-     * 
+     * <p>
      * 特点：
      * - 基于用户ID进行限流
      * - 需要用户认证信息
@@ -44,7 +47,7 @@ public enum RateLimitType {
 
     /**
      * 接口限流
-     * 
+     * <p>
      * 特点：
      * - 基于具体的接口URI进行限流
      * - 保护特定的API端点
@@ -54,7 +57,7 @@ public enum RateLimitType {
 
     /**
      * 方法限流
-     * 
+     * <p>
      * 特点：
      * - 基于具体的方法进行限流
      * - 粒度最细的限流方式
@@ -64,7 +67,7 @@ public enum RateLimitType {
 
     /**
      * 参数限流
-     * 
+     * <p>
      * 特点：
      * - 基于请求参数进行限流
      * - 支持热点参数保护
@@ -74,7 +77,7 @@ public enum RateLimitType {
 
     /**
      * 设备限流
-     * 
+     * <p>
      * 特点：
      * - 基于设备标识进行限流
      * - 适用于移动端应用
@@ -84,7 +87,7 @@ public enum RateLimitType {
 
     /**
      * 应用限流
-     * 
+     * <p>
      * 特点：
      * - 基于应用标识进行限流
      * - 适用于多租户系统
@@ -94,7 +97,7 @@ public enum RateLimitType {
 
     /**
      * 地理位置限流
-     * 
+     * <p>
      * 特点：
      * - 基于地理位置进行限流
      * - 支持国家、省份、城市级别
@@ -104,7 +107,7 @@ public enum RateLimitType {
 
     /**
      * 时间段限流
-     * 
+     * <p>
      * 特点：
      * - 基于时间段进行限流
      * - 支持工作时间、节假日等
@@ -114,7 +117,7 @@ public enum RateLimitType {
 
     /**
      * 资源限流
-     * 
+     * <p>
      * 特点：
      * - 基于具体资源进行限流
      * - 保护特定的资源访问
@@ -124,7 +127,7 @@ public enum RateLimitType {
 
     /**
      * 角色限流
-     * 
+     * <p>
      * 特点：
      * - 基于用户角色进行限流
      * - 不同角色不同配额
@@ -134,7 +137,7 @@ public enum RateLimitType {
 
     /**
      * 自定义限流
-     * 
+     * <p>
      * 特点：
      * - 支持自定义的限流维度
      * - 通过SpEL表达式定义key
@@ -144,7 +147,7 @@ public enum RateLimitType {
 
     /**
      * 组合限流
-     * 
+     * <p>
      * 特点：
      * - 多个维度组合限流
      * - 支持AND、OR逻辑
@@ -169,9 +172,9 @@ public enum RateLimitType {
 
     /**
      * 构造函数
-     * 
-     * @param code 类型代码
-     * @param name 类型名称
+     *
+     * @param code        类型代码
+     * @param name        类型名称
      * @param description 类型描述
      */
     RateLimitType(String code, String name, String description) {
@@ -181,35 +184,8 @@ public enum RateLimitType {
     }
 
     /**
-     * 获取类型代码
-     * 
-     * @return 类型代码
-     */
-    public String getCode() {
-        return code;
-    }
-
-    /**
-     * 获取类型名称
-     * 
-     * @return 类型名称
-     */
-    public String getName() {
-        return name;
-    }
-
-    /**
-     * 获取类型描述
-     * 
-     * @return 类型描述
-     */
-    public String getDescription() {
-        return description;
-    }
-
-    /**
      * 根据代码获取类型枚举
-     * 
+     *
      * @param code 类型代码
      * @return 类型枚举，未找到时返回GLOBAL
      */
@@ -217,19 +193,19 @@ public enum RateLimitType {
         if (code == null || code.trim().isEmpty()) {
             return GLOBAL;
         }
-        
+
         for (RateLimitType type : values()) {
             if (type.getCode().equalsIgnoreCase(code.trim())) {
                 return type;
             }
         }
-        
+
         return GLOBAL;
     }
 
     /**
      * 判断是否需要用户认证信息
-     * 
+     *
      * @return 是否需要用户认证信息
      */
     public boolean requiresAuthentication() {
@@ -238,7 +214,7 @@ public enum RateLimitType {
 
     /**
      * 判断是否需要IP信息
-     * 
+     *
      * @return 是否需要IP信息
      */
     public boolean requiresIpAddress() {
@@ -247,7 +223,7 @@ public enum RateLimitType {
 
     /**
      * 判断是否需要设备信息
-     * 
+     *
      * @return 是否需要设备信息
      */
     public boolean requiresDeviceInfo() {
@@ -256,7 +232,7 @@ public enum RateLimitType {
 
     /**
      * 判断是否需要参数信息
-     * 
+     *
      * @return 是否需要参数信息
      */
     public boolean requiresParameters() {
@@ -265,7 +241,7 @@ public enum RateLimitType {
 
     /**
      * 判断是否为时间相关的限流
-     * 
+     *
      * @return 是否为时间相关的限流
      */
     public boolean isTimeRelated() {
@@ -274,7 +250,7 @@ public enum RateLimitType {
 
     /**
      * 判断是否支持动态配置
-     * 
+     *
      * @return 是否支持动态配置
      */
     public boolean supportsDynamicConfig() {
@@ -283,7 +259,7 @@ public enum RateLimitType {
 
     /**
      * 获取默认的key前缀
-     * 
+     *
      * @return 默认的key前缀
      */
     public String getDefaultKeyPrefix() {
@@ -293,47 +269,32 @@ public enum RateLimitType {
     /**
      * 获取类型的优先级
      * 数值越小优先级越高
-     * 
+     *
      * @return 优先级
      */
     public int getPriority() {
-        switch (this) {
-            case GLOBAL:
-                return 1;
-            case IP:
-                return 2;
-            case USER:
-                return 3;
-            case API:
-                return 4;
-            case METHOD:
-                return 5;
-            case PARAMETER:
-                return 6;
-            case DEVICE:
-                return 7;
-            case APP:
-                return 8;
-            case GEOGRAPHY:
-                return 9;
-            case TIME_PERIOD:
-                return 10;
-            case RESOURCE:
-                return 11;
-            case ROLE:
-                return 12;
-            case CUSTOM:
-                return 13;
-            case COMBINATION:
-                return 14;
-            default:
-                return 99;
-        }
+        return switch (this) {
+            case GLOBAL -> 1;
+            case IP -> 2;
+            case USER -> 3;
+            case API -> 4;
+            case METHOD -> 5;
+            case PARAMETER -> 6;
+            case DEVICE -> 7;
+            case APP -> 8;
+            case GEOGRAPHY -> 9;
+            case TIME_PERIOD -> 10;
+            case RESOURCE -> 11;
+            case ROLE -> 12;
+            case CUSTOM -> 13;
+            case COMBINATION -> 14;
+            default -> 99;
+        };
     }
 
     @Override
     public String toString() {
-        return String.format("RateLimitType{code='%s', name='%s', description='%s'}", 
-                            code, name, description);
+        return String.format("RateLimitType{code='%s', name='%s', description='%s'}",
+                code, name, description);
     }
 }

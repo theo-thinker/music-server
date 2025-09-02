@@ -22,13 +22,13 @@ import java.time.Duration;
 
 /**
  * Redis配置类
- * 
+ * <p>
  * 配置Redis相关组件，包括：
  * 1. RedisTemplate序列化配置
  * 2. 缓存管理器配置
  * 3. Jackson序列化器配置
  * 4. 缓存策略配置
- * 
+ *
  * @author Music Server Development Team
  * @version 1.0.0
  * @since 2025-09-01
@@ -41,7 +41,7 @@ public class RedisConfig {
     /**
      * 配置RedisTemplate
      * 设置Key-Value的序列化方式
-     * 
+     *
      * @param connectionFactory Redis连接工厂
      * @return 配置好的RedisTemplate
      */
@@ -80,7 +80,7 @@ public class RedisConfig {
     /**
      * 配置StringRedisTemplate
      * 专门用于String类型的操作，性能更好
-     * 
+     *
      * @param connectionFactory Redis连接工厂
      * @return StringRedisTemplate
      */
@@ -88,7 +88,7 @@ public class RedisConfig {
     public StringRedisTemplate stringRedisTemplate(RedisConnectionFactory connectionFactory) {
         StringRedisTemplate template = new StringRedisTemplate();
         template.setConnectionFactory(connectionFactory);
-        
+
         log.info("StringRedisTemplate配置完成");
         return template;
     }
@@ -96,7 +96,7 @@ public class RedisConfig {
     /**
      * 配置缓存管理器
      * 设置缓存的序列化方式和过期策略
-     * 
+     *
      * @param connectionFactory Redis连接工厂
      * @return Redis缓存管理器
      */
@@ -107,16 +107,16 @@ public class RedisConfig {
 
         // 配置Redis缓存
         RedisCacheConfiguration config = RedisCacheConfiguration.defaultCacheConfig()
-            // 设置缓存过期时间
-            .entryTtl(Duration.ofMinutes(30))
-            // 禁用缓存null值
-            .disableCachingNullValues()
-            // 设置Key序列化器
-            .serializeKeysWith(org.springframework.data.redis.serializer.RedisSerializationContext.SerializationPair
-                .fromSerializer(new StringRedisSerializer()))
-            // 设置Value序列化器
-            .serializeValuesWith(org.springframework.data.redis.serializer.RedisSerializationContext.SerializationPair
-                .fromSerializer(jackson2JsonRedisSerializer));
+                // 设置缓存过期时间
+                .entryTtl(Duration.ofMinutes(30))
+                // 禁用缓存null值
+                .disableCachingNullValues()
+                // 设置Key序列化器
+                .serializeKeysWith(org.springframework.data.redis.serializer.RedisSerializationContext.SerializationPair
+                        .fromSerializer(new StringRedisSerializer()))
+                // 设置Value序列化器
+                .serializeValuesWith(org.springframework.data.redis.serializer.RedisSerializationContext.SerializationPair
+                        .fromSerializer(jackson2JsonRedisSerializer));
 
         // 构建缓存管理器
         RedisCacheManager cacheManager = RedisCacheManager.builder(connectionFactory)
@@ -135,28 +135,28 @@ public class RedisConfig {
     /**
      * 创建Jackson序列化器
      * 配置Jackson的序列化和反序列化规则
-     * 
+     *
      * @return Jackson2JsonRedisSerializer
      */
     private Jackson2JsonRedisSerializer<Object> createJacksonSerializer() {
         // 创建ObjectMapper并配置
         ObjectMapper objectMapper = new ObjectMapper();
-        
+
         // 设置可见性
         objectMapper.setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.ANY);
-        
+
         // 启用类型信息，用于反序列化
         objectMapper.activateDefaultTyping(
-            LaissezFaireSubTypeValidator.instance,
-            ObjectMapper.DefaultTyping.NON_FINAL
+                LaissezFaireSubTypeValidator.instance,
+                ObjectMapper.DefaultTyping.NON_FINAL
         );
-        
+
         // 注册Java8时间模块
         objectMapper.registerModule(new JavaTimeModule());
-        
+
         // 使用新的构造方法创建序列化器
-        Jackson2JsonRedisSerializer<Object> jackson2JsonRedisSerializer = 
-            new Jackson2JsonRedisSerializer<>(objectMapper, Object.class);
+        Jackson2JsonRedisSerializer<Object> jackson2JsonRedisSerializer =
+                new Jackson2JsonRedisSerializer<>(objectMapper, Object.class);
 
         return jackson2JsonRedisSerializer;
     }

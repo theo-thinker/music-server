@@ -15,10 +15,10 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * Redis工具类
- * 
+ * <p>
  * 封装Redis常用操作，提供便捷的缓存操作方法
  * 支持String、Hash、List、Set、ZSet等数据类型
- * 
+ *
  * @author Music Server Development Team
  * @version 1.0.0
  * @since 2025-09-01
@@ -44,10 +44,10 @@ public class RedisUtil {
 
     /**
      * 设置过期时间
-     * 
-     * @param key 键
+     *
+     * @param key     键
      * @param timeout 过期时间
-     * @param unit 时间单位
+     * @param unit    时间单位
      * @return 是否成功
      */
     public boolean expire(String key, long timeout, TimeUnit unit) {
@@ -65,7 +65,7 @@ public class RedisUtil {
 
     /**
      * 获取过期时间
-     * 
+     *
      * @param key 键
      * @return 过期时间（秒），-1表示永不过期，-2表示键不存在
      */
@@ -81,7 +81,7 @@ public class RedisUtil {
 
     /**
      * 判断键是否存在
-     * 
+     *
      * @param key 键
      * @return 是否存在
      */
@@ -97,7 +97,7 @@ public class RedisUtil {
 
     /**
      * 删除键
-     * 
+     *
      * @param keys 键列表
      * @return 删除的数量
      */
@@ -120,7 +120,7 @@ public class RedisUtil {
 
     /**
      * 获取字符串值
-     * 
+     *
      * @param key 键
      * @return 值
      */
@@ -135,7 +135,7 @@ public class RedisUtil {
 
     /**
      * 获取字符串值
-     * 
+     *
      * @param key 键
      * @return 字符串值
      */
@@ -150,8 +150,8 @@ public class RedisUtil {
 
     /**
      * 设置字符串值
-     * 
-     * @param key 键
+     *
+     * @param key   键
      * @param value 值
      * @return 是否成功
      */
@@ -167,11 +167,11 @@ public class RedisUtil {
 
     /**
      * 设置字符串值并指定过期时间
-     * 
-     * @param key 键
-     * @param value 值
+     *
+     * @param key     键
+     * @param value   值
      * @param timeout 过期时间
-     * @param unit 时间单位
+     * @param unit    时间单位
      * @return 是否成功
      */
     public boolean set(String key, Object value, long timeout, TimeUnit unit) {
@@ -183,16 +183,16 @@ public class RedisUtil {
             }
             return true;
         } catch (Exception e) {
-            log.error("设置值并指定过期时间失败: key={}, value={}, timeout={}, unit={}", 
-                     key, value, timeout, unit, e);
+            log.error("设置值并指定过期时间失败: key={}, value={}, timeout={}, unit={}",
+                    key, value, timeout, unit, e);
             return false;
         }
     }
 
     /**
      * 递增
-     * 
-     * @param key 键
+     *
+     * @param key   键
      * @param delta 递增值
      * @return 递增后的值
      */
@@ -208,8 +208,8 @@ public class RedisUtil {
 
     /**
      * 递减
-     * 
-     * @param key 键
+     *
+     * @param key   键
      * @param delta 递减值
      * @return 递减后的值
      */
@@ -229,8 +229,8 @@ public class RedisUtil {
 
     /**
      * 获取Hash值
-     * 
-     * @param key 键
+     *
+     * @param key   键
      * @param field 字段
      * @return 值
      */
@@ -245,7 +245,7 @@ public class RedisUtil {
 
     /**
      * 获取Hash所有键值对
-     * 
+     *
      * @param key 键
      * @return 键值对Map
      */
@@ -260,8 +260,8 @@ public class RedisUtil {
 
     /**
      * 设置Hash值
-     * 
-     * @param key 键
+     *
+     * @param key   键
      * @param field 字段
      * @param value 值
      * @return 是否成功
@@ -278,7 +278,7 @@ public class RedisUtil {
 
     /**
      * 设置Hash多个值
-     * 
+     *
      * @param key 键
      * @param map 键值对Map
      * @return 是否成功
@@ -295,8 +295,8 @@ public class RedisUtil {
 
     /**
      * 删除Hash字段
-     * 
-     * @param key 键
+     *
+     * @param key    键
      * @param fields 字段列表
      * @return 删除的数量
      */
@@ -316,7 +316,7 @@ public class RedisUtil {
 
     /**
      * 生成用户缓存键
-     * 
+     *
      * @param userId 用户ID
      * @return 缓存键
      */
@@ -326,7 +326,7 @@ public class RedisUtil {
 
     /**
      * 生成音乐缓存键
-     * 
+     *
      * @param musicId 音乐ID
      * @return 缓存键
      */
@@ -336,7 +336,7 @@ public class RedisUtil {
 
     /**
      * 生成播放列表缓存键
-     * 
+     *
      * @param playlistId 播放列表ID
      * @return 缓存键
      */
@@ -346,7 +346,7 @@ public class RedisUtil {
 
     /**
      * 生成验证码缓存键
-     * 
+     *
      * @param identifier 标识符（邮箱或手机号）
      * @return 缓存键
      */
@@ -356,7 +356,7 @@ public class RedisUtil {
 
     /**
      * 生成登录失败缓存键
-     * 
+     *
      * @param username 用户名
      * @return 缓存键
      */
@@ -366,7 +366,7 @@ public class RedisUtil {
 
     /**
      * 生成用户会话缓存键
-     * 
+     *
      * @param userId 用户ID
      * @return 缓存键
      */
@@ -376,7 +376,7 @@ public class RedisUtil {
 
     /**
      * 生成JWT黑名单缓存键
-     * 
+     *
      * @param jti JWT ID
      * @return 缓存键
      */

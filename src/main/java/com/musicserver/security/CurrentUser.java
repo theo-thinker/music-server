@@ -7,9 +7,9 @@ import java.lang.annotation.Target;
 
 /**
  * 当前用户注解
- * 
+ * <p>
  * 用于在Controller方法参数中自动注入当前登录用户的ID
- * 
+ *
  * @author Music Server Development Team
  * @version 1.0.0
  * @since 2025-09-01

@@ -11,10 +11,10 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * 限流配置属性类
- * 
+ * <p>
  * 管理系统级别的限流配置参数
  * 支持多维度、多策略的限流配置
- * 
+ *
  * @author Music Server Development Team
  * @version 1.0.0
  * @since 2025-09-01
@@ -564,34 +564,34 @@ public class RateLimitProperties {
 
     /**
      * 验证配置是否有效
-     * 
+     *
      * @return 配置是否有效
      */
     public boolean isValid() {
-        return enabled != null && 
-               defaultLimit != null && defaultLimit > 0 &&
-               defaultPeriod != null && defaultPeriod > 0 &&
-               defaultStrategy != null &&
-               defaultType != null &&
-               keyPrefix != null && !keyPrefix.trim().isEmpty();
+        return enabled != null &&
+                defaultLimit != null && defaultLimit > 0 &&
+                defaultPeriod != null && defaultPeriod > 0 &&
+                defaultStrategy != null &&
+                defaultType != null &&
+                keyPrefix != null && !keyPrefix.trim().isEmpty();
     }
 
     /**
      * 获取指定策略的默认配置
-     * 
+     *
      * @param strategy 限流策略
      * @return 默认配置映射
      */
     public Map<String, Object> getStrategyDefaults(RateLimitStrategy strategy) {
         Map<String, Object> defaults = new HashMap<>();
-        
+
         switch (strategy) {
             case SLIDING_WINDOW:
                 defaults.put("slices", this.strategy.slidingWindow.defaultSlices);
                 defaults.put("maxSlices", this.strategy.slidingWindow.maxSlices);
                 defaults.put("minSlices", this.strategy.slidingWindow.minSlices);
                 break;
-                
+
             case TOKEN_BUCKET:
             case DISTRIBUTED_TOKEN_BUCKET:
                 defaults.put("capacity", this.strategy.tokenBucket.defaultCapacity);
@@ -600,42 +600,42 @@ public class RateLimitProperties {
                 defaults.put("maxCapacity", this.strategy.tokenBucket.maxCapacity);
                 defaults.put("maxRefillRate", this.strategy.tokenBucket.maxRefillRate);
                 break;
-                
+
             case LEAKY_BUCKET:
                 defaults.put("capacity", this.strategy.leakyBucket.defaultCapacity);
                 defaults.put("leakRate", this.strategy.leakyBucket.defaultLeakRate);
                 defaults.put("maxCapacity", this.strategy.leakyBucket.maxCapacity);
                 defaults.put("maxLeakRate", this.strategy.leakyBucket.maxLeakRate);
                 break;
-                
+
             case FIXED_WINDOW:
                 defaults.put("windowSize", this.strategy.fixedWindow.defaultWindowSize);
                 defaults.put("maxWindowSize", this.strategy.fixedWindow.maxWindowSize);
                 defaults.put("minWindowSize", this.strategy.fixedWindow.minWindowSize);
                 break;
-                
+
             case COUNTER:
                 defaults.put("resetInterval", this.strategy.counter.defaultResetInterval);
                 defaults.put("maxResetInterval", this.strategy.counter.maxResetInterval);
                 defaults.put("minResetInterval", this.strategy.counter.minResetInterval);
                 break;
-                
+
             default:
                 break;
         }
-        
+
         return defaults;
     }
 
     /**
      * 获取指定类型的限流配置
-     * 
+     *
      * @param type 限流类型
      * @return 限流配置
      */
     public Map<String, Object> getTypeConfig(RateLimitType type) {
         Map<String, Object> config = new HashMap<>();
-        
+
         switch (type) {
             case GLOBAL:
                 config.put("enabled", global.enabled);
@@ -643,7 +643,7 @@ public class RateLimitProperties {
                 config.put("period", global.period);
                 config.put("strategy", global.strategy);
                 break;
-                
+
             case IP:
                 config.put("enabled", ip.enabled);
                 config.put("limit", ip.limit);
@@ -652,7 +652,7 @@ public class RateLimitProperties {
                 config.put("whitelist", ip.whitelist);
                 config.put("blacklist", ip.blacklist);
                 break;
-                
+
             case USER:
                 config.put("enabled", user.enabled);
                 config.put("limit", user.limit);
@@ -660,7 +660,7 @@ public class RateLimitProperties {
                 config.put("strategy", user.strategy);
                 config.put("roles", user.roles);
                 break;
-                
+
             case API:
                 config.put("enabled", api.enabled);
                 config.put("limit", api.limit);
@@ -668,7 +668,7 @@ public class RateLimitProperties {
                 config.put("strategy", api.strategy);
                 config.put("specificApis", api.specificApis);
                 break;
-                
+
             default:
                 // 使用默认配置
                 config.put("enabled", true);
@@ -677,7 +677,7 @@ public class RateLimitProperties {
                 config.put("strategy", defaultStrategy);
                 break;
         }
-        
+
         return config;
     }
 }

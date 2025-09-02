@@ -7,9 +7,9 @@ import java.time.LocalDateTime;
 
 /**
  * 用户信息响应DTO
- * 
+ * <p>
  * 用于返回用户信息，不包含敏感数据
- * 
+ *
  * @author Music Server Development Team
  * @version 1.0.0
  * @since 2025-09-01

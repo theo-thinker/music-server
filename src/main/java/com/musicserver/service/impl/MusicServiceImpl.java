@@ -25,9 +25,9 @@ import java.util.List;
 
 /**
  * 音乐服务实现类
- * 
+ * <p>
  * 实现音乐相关的业务逻辑处理
- * 
+ *
  * @author Music Server Development Team
  * @version 1.0.0
  * @since 2025-09-01
@@ -45,18 +45,18 @@ public class MusicServiceImpl implements MusicService {
     @Transactional(rollbackFor = Exception.class)
     public Music addMusic(Music music) {
         log.info("添加音乐: title={}, artistId={}", music.getTitle(), music.getArtistId());
-        
+
         // 设置默认值
         music.setStatus(1); // 正常状态
         music.setPlayCount(0L);
         music.setLikeCount(0L);
         music.setCollectCount(0L);
-        
+
         int result = musicMapper.insert(music);
         if (result <= 0) {
             throw new BusinessException(ResultCode.OPERATION_FAILED);
         }
-        
+
         log.info("音乐添加成功: musicId={}", music.getId());
         return music;
     }
@@ -76,17 +76,17 @@ public class MusicServiceImpl implements MusicService {
     @CacheEvict(value = "musicCache", key = "#music.id")
     public Music updateMusic(Music music) {
         log.info("更新音乐信息: musicId={}", music.getId());
-        
+
         Music existingMusic = musicMapper.selectById(music.getId());
         if (existingMusic == null) {
             throw new BusinessException(ResultCode.MUSIC_NOT_FOUND);
         }
-        
+
         int result = musicMapper.updateById(music);
         if (result <= 0) {
             throw new BusinessException(ResultCode.OPERATION_FAILED);
         }
-        
+
         log.info("音乐信息更新成功: musicId={}", music.getId());
         return musicMapper.selectById(music.getId());
     }
@@ -96,11 +96,11 @@ public class MusicServiceImpl implements MusicService {
     @CacheEvict(value = "musicCache", key = "#id")
     public boolean deleteMusic(Long id) {
         log.info("删除音乐: musicId={}", id);
-        
+
         Music music = new Music();
         music.setId(id);
         music.setStatus(0); // 下架状态
-        
+
         int result = musicMapper.updateById(music);
         log.info("音乐删除成功: musicId={}", id);
         return result > 0;
@@ -109,25 +109,25 @@ public class MusicServiceImpl implements MusicService {
     @Override
     public IPage<Music> getMusicList(Page<Music> page, String keyword, Long categoryId, Long artistId) {
         LambdaQueryWrapper<Music> wrapper = new LambdaQueryWrapper<>();
-        
+
         // 只查询正常状态的音乐
         wrapper.eq(Music::getStatus, 1);
-        
+
         // 关键词搜索
         if (StringUtils.hasText(keyword)) {
             wrapper.like(Music::getTitle, keyword);
         }
-        
+
         // 分类筛选
         if (categoryId != null) {
             wrapper.eq(Music::getCategoryId, categoryId);
         }
-        
+
         // 艺术家筛选
         if (artistId != null) {
             wrapper.eq(Music::getArtistId, artistId);
         }
-        
+
         wrapper.orderByDesc(Music::getCreatedTime);
         return musicMapper.selectPage(page, wrapper);
     }
@@ -163,11 +163,11 @@ public class MusicServiceImpl implements MusicService {
     public IPage<Music> searchMusic(String keyword, Page<Music> page) {
         LambdaQueryWrapper<Music> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(Music::getStatus, 1);
-        
+
         if (StringUtils.hasText(keyword)) {
             wrapper.and(w -> w.like(Music::getTitle, keyword));
         }
-        
+
         wrapper.orderByDesc(Music::getPlayCount);
         return musicMapper.selectPage(page, wrapper);
     }
@@ -204,14 +204,14 @@ public class MusicServiceImpl implements MusicService {
     @Transactional(rollbackFor = Exception.class)
     public boolean incrementPlayCount(Long musicId, Long userId) {
         log.info("增加播放次数: musicId={}, userId={}", musicId, userId);
-        
+
         // 增加音乐播放次数
         Music music = musicMapper.selectById(musicId);
         if (music != null) {
             music.setPlayCount(music.getPlayCount() + 1);
             musicMapper.updateById(music);
         }
-        
+
         // 记录播放历史
         if (userId != null) {
             PlayHistory history = new PlayHistory();
@@ -221,7 +221,7 @@ public class MusicServiceImpl implements MusicService {
             history.setPlayDuration(0); // 实际播放时长需要前端传递
             playHistoryMapper.insert(history);
         }
-        
+
         return true;
     }
 
@@ -229,13 +229,13 @@ public class MusicServiceImpl implements MusicService {
     @Transactional(rollbackFor = Exception.class)
     public boolean incrementLikeCount(Long musicId, Long userId) {
         log.info("点赞音乐: musicId={}, userId={}", musicId, userId);
-        
+
         Music music = musicMapper.selectById(musicId);
         if (music != null) {
             music.setLikeCount(music.getLikeCount() + 1);
             musicMapper.updateById(music);
         }
-        
+
         return true;
     }
 
@@ -243,13 +243,13 @@ public class MusicServiceImpl implements MusicService {
     @Transactional(rollbackFor = Exception.class)
     public boolean decrementLikeCount(Long musicId, Long userId) {
         log.info("取消点赞音乐: musicId={}, userId={}", musicId, userId);
-        
+
         Music music = musicMapper.selectById(musicId);
         if (music != null && music.getLikeCount() > 0) {
             music.setLikeCount(music.getLikeCount() - 1);
             musicMapper.updateById(music);
         }
-        
+
         return true;
     }
 
@@ -257,25 +257,25 @@ public class MusicServiceImpl implements MusicService {
     @Transactional(rollbackFor = Exception.class)
     public boolean incrementCollectCount(Long musicId, Long userId) {
         log.info("收藏音乐: musicId={}, userId={}", musicId, userId);
-        
+
         // 检查是否已收藏
         if (isUserCollected(musicId, userId)) {
             return false;
         }
-        
+
         // 添加收藏记录
         UserMusicCollection collection = new UserMusicCollection();
         collection.setUserId(userId);
         collection.setMusicId(musicId);
         userMusicCollectionMapper.insert(collection);
-        
+
         // 增加音乐收藏次数
         Music music = musicMapper.selectById(musicId);
         if (music != null) {
             music.setCollectCount(music.getCollectCount() + 1);
             musicMapper.updateById(music);
         }
-        
+
         return true;
     }
 
@@ -283,13 +283,13 @@ public class MusicServiceImpl implements MusicService {
     @Transactional(rollbackFor = Exception.class)
     public boolean decrementCollectCount(Long musicId, Long userId) {
         log.info("取消收藏音乐: musicId={}, userId={}", musicId, userId);
-        
+
         // 删除收藏记录
         LambdaQueryWrapper<UserMusicCollection> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(UserMusicCollection::getUserId, userId);
         wrapper.eq(UserMusicCollection::getMusicId, musicId);
         int deleted = userMusicCollectionMapper.delete(wrapper);
-        
+
         if (deleted > 0) {
             // 减少音乐收藏次数
             Music music = musicMapper.selectById(musicId);
@@ -298,7 +298,7 @@ public class MusicServiceImpl implements MusicService {
                 musicMapper.updateById(music);
             }
         }
-        
+
         return deleted > 0;
     }
 
@@ -319,7 +319,7 @@ public class MusicServiceImpl implements MusicService {
     @Transactional(rollbackFor = Exception.class)
     public Integer batchImportMusic(List<Music> musicList) {
         log.info("批量导入音乐: count={}", musicList.size());
-        
+
         int successCount = 0;
         for (Music music : musicList) {
             try {
@@ -329,7 +329,7 @@ public class MusicServiceImpl implements MusicService {
                 log.error("导入音乐失败: title={}, error={}", music.getTitle(), e.getMessage());
             }
         }
-        
+
         log.info("批量导入音乐完成: total={}, success={}", musicList.size(), successCount);
         return successCount;
     }
@@ -350,18 +350,18 @@ public class MusicServiceImpl implements MusicService {
         if (music == null) {
             return List.of();
         }
-        
+
         LambdaQueryWrapper<Music> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(Music::getStatus, 1);
         wrapper.ne(Music::getId, musicId); // 排除自己
-        
+
         // 优先推荐同一艺术家的其他作品
         wrapper.and(w -> w.eq(Music::getArtistId, music.getArtistId())
                 .or().eq(Music::getCategoryId, music.getCategoryId()));
-        
+
         wrapper.orderByDesc(Music::getPlayCount);
         wrapper.last("LIMIT " + (limit != null ? limit : 10));
-        
+
         return musicMapper.selectList(wrapper);
     }
 }

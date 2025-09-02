@@ -11,9 +11,9 @@ import java.util.List;
 
 /**
  * 文件详情视图对象
- * 
+ * <p>
  * 用于展示文件的详细信息
- * 
+ *
  * @author Music Server Development Team
  * @version 1.0.0
  * @since 2025-09-01
@@ -148,7 +148,7 @@ public class FileDetailVO {
     @AllArgsConstructor
     @Schema(description = "用户基本信息")
     public static class UserBasicInfo {
-        
+
         /**
          * 用户ID
          */
@@ -183,7 +183,7 @@ public class FileDetailVO {
     @AllArgsConstructor
     @Schema(description = "文件元数据")
     public static class FileMetadata {
-        
+
         /**
          * 图片宽度（仅图片文件）
          */

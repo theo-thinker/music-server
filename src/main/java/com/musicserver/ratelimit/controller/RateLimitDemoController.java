@@ -14,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import jakarta.servlet.http.HttpServletRequest;
+
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
@@ -22,10 +23,10 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * 限流功能演示控制器
- * 
+ * <p>
  * 提供各种限流策略的演示接口
  * 用于测试和展示限流功能的效果
- * 
+ *
  * @author Music Server Development Team
  * @version 1.0.0
  * @since 2025-09-01
@@ -46,13 +47,13 @@ public class RateLimitDemoController {
     @GetMapping("/sliding-window")
     @Operation(summary = "滑动窗口限流演示", description = "1分钟内最多允许10次请求")
     @RateLimit(
-        key = "sliding_window_demo",
-        limit = 10,
-        period = 60,
-        timeUnit = TimeUnit.SECONDS,
-        strategy = RateLimitStrategy.SLIDING_WINDOW,
-        type = RateLimitType.GLOBAL,
-        message = "滑动窗口限流：1分钟内最多10次请求"
+            key = "sliding_window_demo",
+            limit = 10,
+            period = 60,
+            timeUnit = TimeUnit.SECONDS,
+            strategy = RateLimitStrategy.SLIDING_WINDOW,
+            type = RateLimitType.GLOBAL,
+            message = "滑动窗口限流：1分钟内最多10次请求"
     )
     public Result<Map<String, Object>> slidingWindowDemo() {
         Map<String, Object> response = new HashMap<>();
@@ -60,7 +61,7 @@ public class RateLimitDemoController {
         response.put("limit", "10次/分钟");
         response.put("timestamp", LocalDateTime.now());
         response.put("message", "请求成功通过滑动窗口限流检查");
-        
+
         log.info("滑动窗口限流演示接口被调用");
         return Result.success(response);
     }
@@ -72,15 +73,15 @@ public class RateLimitDemoController {
     @GetMapping("/token-bucket")
     @Operation(summary = "令牌桶限流演示", description = "桶容量20，每秒生成5个令牌，支持突发流量")
     @RateLimit(
-        key = "token_bucket_demo",
-        limit = 20,
-        period = 1,
-        timeUnit = TimeUnit.SECONDS,
-        strategy = RateLimitStrategy.TOKEN_BUCKET,
-        type = RateLimitType.GLOBAL,
-        bucketCapacity = 20,
-        refillRate = 5.0,
-        message = "令牌桶限流：桶容量20，每秒生成5个令牌"
+            key = "token_bucket_demo",
+            limit = 20,
+            period = 1,
+            timeUnit = TimeUnit.SECONDS,
+            strategy = RateLimitStrategy.TOKEN_BUCKET,
+            type = RateLimitType.GLOBAL,
+            bucketCapacity = 20,
+            refillRate = 5.0,
+            message = "令牌桶限流：桶容量20，每秒生成5个令牌"
     )
     public Result<Map<String, Object>> tokenBucketDemo() {
         Map<String, Object> response = new HashMap<>();
@@ -89,7 +90,7 @@ public class RateLimitDemoController {
         response.put("refillRate", "5令牌/秒");
         response.put("timestamp", LocalDateTime.now());
         response.put("message", "请求成功通过令牌桶限流检查");
-        
+
         log.info("令牌桶限流演示接口被调用");
         return Result.success(response);
     }
@@ -101,15 +102,15 @@ public class RateLimitDemoController {
     @GetMapping("/leaky-bucket")
     @Operation(summary = "漏桶限流演示", description = "桶容量15，每秒漏出3个请求，恒定输出速率")
     @RateLimit(
-        key = "leaky_bucket_demo",
-        limit = 15,
-        period = 1,
-        timeUnit = TimeUnit.SECONDS,
-        strategy = RateLimitStrategy.LEAKY_BUCKET,
-        type = RateLimitType.GLOBAL,
-        leakyBucketCapacity = 15,
-        leakRate = 3.0,
-        message = "漏桶限流：桶容量15，每秒漏出3个请求"
+            key = "leaky_bucket_demo",
+            limit = 15,
+            period = 1,
+            timeUnit = TimeUnit.SECONDS,
+            strategy = RateLimitStrategy.LEAKY_BUCKET,
+            type = RateLimitType.GLOBAL,
+            leakyBucketCapacity = 15,
+            leakRate = 3.0,
+            message = "漏桶限流：桶容量15，每秒漏出3个请求"
     )
     public Result<Map<String, Object>> leakyBucketDemo() {
         Map<String, Object> response = new HashMap<>();
@@ -118,7 +119,7 @@ public class RateLimitDemoController {
         response.put("leakRate", "3请求/秒");
         response.put("timestamp", LocalDateTime.now());
         response.put("message", "请求成功通过漏桶限流检查");
-        
+
         log.info("漏桶限流演示接口被调用");
         return Result.success(response);
     }
@@ -130,13 +131,13 @@ public class RateLimitDemoController {
     @GetMapping("/fixed-window")
     @Operation(summary = "固定窗口限流演示", description = "每30秒最多8次请求")
     @RateLimit(
-        key = "fixed_window_demo",
-        limit = 8,
-        period = 30,
-        timeUnit = TimeUnit.SECONDS,
-        strategy = RateLimitStrategy.FIXED_WINDOW,
-        type = RateLimitType.GLOBAL,
-        message = "固定窗口限流：每30秒最多8次请求"
+            key = "fixed_window_demo",
+            limit = 8,
+            period = 30,
+            timeUnit = TimeUnit.SECONDS,
+            strategy = RateLimitStrategy.FIXED_WINDOW,
+            type = RateLimitType.GLOBAL,
+            message = "固定窗口限流：每30秒最多8次请求"
     )
     public Result<Map<String, Object>> fixedWindowDemo() {
         Map<String, Object> response = new HashMap<>();
@@ -144,7 +145,7 @@ public class RateLimitDemoController {
         response.put("limit", "8次/30秒");
         response.put("timestamp", LocalDateTime.now());
         response.put("message", "请求成功通过固定窗口限流检查");
-        
+
         log.info("固定窗口限流演示接口被调用");
         return Result.success(response);
     }
@@ -156,13 +157,13 @@ public class RateLimitDemoController {
     @GetMapping("/ip-limit")
     @Operation(summary = "IP限流演示", description = "每个IP每分钟最多5次请求")
     @RateLimit(
-        key = "ip_limit_demo",
-        limit = 5,
-        period = 60,
-        timeUnit = TimeUnit.SECONDS,
-        strategy = RateLimitStrategy.SLIDING_WINDOW,
-        type = RateLimitType.IP,
-        message = "IP限流：每个IP每分钟最多5次请求"
+            key = "ip_limit_demo",
+            limit = 5,
+            period = 60,
+            timeUnit = TimeUnit.SECONDS,
+            strategy = RateLimitStrategy.SLIDING_WINDOW,
+            type = RateLimitType.IP,
+            message = "IP限流：每个IP每分钟最多5次请求"
     )
     public Result<Map<String, Object>> ipLimitDemo(HttpServletRequest request) {
         Map<String, Object> response = new HashMap<>();
@@ -171,7 +172,7 @@ public class RateLimitDemoController {
         response.put("clientIp", getClientIp(request));
         response.put("timestamp", LocalDateTime.now());
         response.put("message", "请求成功通过IP限流检查");
-        
+
         log.info("IP限流演示接口被调用，客户端IP: {}", getClientIp(request));
         return Result.success(response);
     }
@@ -183,15 +184,15 @@ public class RateLimitDemoController {
     @GetMapping("/user-limit")
     @Operation(summary = "用户限流演示", description = "每个用户每分钟最多20次请求（需要认证）")
     @RateLimit(
-        key = "user_limit_demo",
-        limit = 20,
-        period = 60,
-        timeUnit = TimeUnit.SECONDS,
-        strategy = RateLimitStrategy.TOKEN_BUCKET,
-        type = RateLimitType.USER,
-        bucketCapacity = 20,
-        refillRate = 0.33,  // 每3秒1个令牌
-        message = "用户限流：每个用户每分钟最多20次请求"
+            key = "user_limit_demo",
+            limit = 20,
+            period = 60,
+            timeUnit = TimeUnit.SECONDS,
+            strategy = RateLimitStrategy.TOKEN_BUCKET,
+            type = RateLimitType.USER,
+            bucketCapacity = 20,
+            refillRate = 0.33,  // 每3秒1个令牌
+            message = "用户限流：每个用户每分钟最多20次请求"
     )
     public Result<Map<String, Object>> userLimitDemo(HttpServletRequest request) {
         Map<String, Object> response = new HashMap<>();
@@ -200,7 +201,7 @@ public class RateLimitDemoController {
         response.put("userId", getUserId(request));
         response.put("timestamp", LocalDateTime.now());
         response.put("message", "请求成功通过用户限流检查");
-        
+
         log.info("用户限流演示接口被调用，用户ID: {}", getUserId(request));
         return Result.success(response);
     }
@@ -212,25 +213,25 @@ public class RateLimitDemoController {
     @GetMapping("/hotspot-limit")
     @Operation(summary = "热点数据限流演示", description = "热点参数检测和限流")
     @RateLimit(
-        key = "hotspot_limit_demo",
-        limit = 100,  // 普通限流阈值
-        period = 60,
-        timeUnit = TimeUnit.SECONDS,
-        strategy = RateLimitStrategy.HOTSPOT,
-        type = RateLimitType.PARAMETER,
-        message = "热点数据限流：热点参数被特殊限流处理"
+            key = "hotspot_limit_demo",
+            limit = 100,  // 普通限流阈值
+            period = 60,
+            timeUnit = TimeUnit.SECONDS,
+            strategy = RateLimitStrategy.HOTSPOT,
+            type = RateLimitType.PARAMETER,
+            message = "热点数据限流：热点参数被特殊限流处理"
     )
     public Result<Map<String, Object>> hotspotLimitDemo(
-            @Parameter(description = "测试参数，用于热点检测") 
+            @Parameter(description = "测试参数，用于热点检测")
             @RequestParam(defaultValue = "normal") String param) {
-        
+
         Map<String, Object> response = new HashMap<>();
         response.put("strategy", "热点数据限流");
         response.put("param", param);
         response.put("limit", "普通100次/分钟，热点10次/分钟");
         response.put("timestamp", LocalDateTime.now());
         response.put("message", "请求成功通过热点数据限流检查");
-        
+
         log.info("热点数据限流演示接口被调用，参数: {}", param);
         return Result.success(response);
     }
@@ -242,14 +243,14 @@ public class RateLimitDemoController {
     @PostMapping("/conditional-limit")
     @Operation(summary = "条件限流演示", description = "只对POST请求进行限流")
     @RateLimit(
-        key = "conditional_limit_demo",
-        limit = 3,
-        period = 30,
-        timeUnit = TimeUnit.SECONDS,
-        strategy = RateLimitStrategy.FIXED_WINDOW,
-        type = RateLimitType.GLOBAL,
-        condition = "#request.getMethod() == 'POST'",
-        message = "条件限流：POST请求每30秒最多3次"
+            key = "conditional_limit_demo",
+            limit = 3,
+            period = 30,
+            timeUnit = TimeUnit.SECONDS,
+            strategy = RateLimitStrategy.FIXED_WINDOW,
+            type = RateLimitType.GLOBAL,
+            condition = "#request.getMethod() == 'POST'",
+            message = "条件限流：POST请求每30秒最多3次"
     )
     public Result<Map<String, Object>> conditionalLimitDemo(@RequestBody Map<String, Object> data) {
         Map<String, Object> response = new HashMap<>();
@@ -259,7 +260,7 @@ public class RateLimitDemoController {
         response.put("data", data);
         response.put("timestamp", LocalDateTime.now());
         response.put("message", "POST请求成功通过条件限流检查");
-        
+
         log.info("条件限流演示接口被调用，数据: {}", data);
         return Result.success(response);
     }
@@ -271,19 +272,19 @@ public class RateLimitDemoController {
     @GetMapping("/dynamic-key/{category}")
     @Operation(summary = "动态key限流演示", description = "使用SpEL表达式生成动态key")
     @RateLimit(
-        key = "'category_' + #category + '_' + #ip",
-        limit = 5,
-        period = 60,
-        timeUnit = TimeUnit.SECONDS,
-        strategy = RateLimitStrategy.SLIDING_WINDOW,
-        type = RateLimitType.CUSTOM,
-        message = "动态key限流：每个分类每个IP每分钟最多5次"
+            key = "'category_' + #category + '_' + #ip",
+            limit = 5,
+            period = 60,
+            timeUnit = TimeUnit.SECONDS,
+            strategy = RateLimitStrategy.SLIDING_WINDOW,
+            type = RateLimitType.CUSTOM,
+            message = "动态key限流：每个分类每个IP每分钟最多5次"
     )
     public Result<Map<String, Object>> dynamicKeyDemo(
             @Parameter(description = "分类参数")
             @PathVariable String category,
             HttpServletRequest request) {
-        
+
         Map<String, Object> response = new HashMap<>();
         response.put("strategy", "动态key限流");
         response.put("category", category);
@@ -292,7 +293,7 @@ public class RateLimitDemoController {
         response.put("limit", "5次/分钟");
         response.put("timestamp", LocalDateTime.now());
         response.put("message", "请求成功通过动态key限流检查");
-        
+
         log.info("动态key限流演示接口被调用，分类: {}, IP: {}", category, getClientIp(request));
         return Result.success(response);
     }
@@ -307,7 +308,7 @@ public class RateLimitDemoController {
             @RequestParam(defaultValue = "hourly") String type,
             @Parameter(description = "时间字符串", example = "2025-09-01-14")
             @RequestParam(required = false) String time) {
-        
+
         if (time == null) {
             if ("hourly".equals(type)) {
                 time = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd-HH"));
@@ -315,15 +316,15 @@ public class RateLimitDemoController {
                 time = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
             }
         }
-        
+
         RateLimitStatistics statistics = rateLimitMonitor.getStatistics(type, time);
-        
+
         Map<String, Object> response = new HashMap<>();
         response.put("type", type);
         response.put("time", time);
         response.put("statistics", statistics);
         response.put("timestamp", LocalDateTime.now());
-        
+
         return Result.success(response);
     }
 
@@ -337,19 +338,19 @@ public class RateLimitDemoController {
             @RequestParam(required = false) String date,
             @Parameter(description = "返回前N个热点", example = "10")
             @RequestParam(defaultValue = "10") int topN) {
-        
+
         if (date == null) {
             date = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
         }
-        
+
         Map<String, Object> hotspotStats = rateLimitMonitor.getHotspotStatistics(date, topN);
-        
+
         Map<String, Object> response = new HashMap<>();
         response.put("date", date);
         response.put("topN", topN);
         response.put("hotspotStatistics", hotspotStats);
         response.put("timestamp", LocalDateTime.now());
-        
+
         return Result.success(response);
     }
 
@@ -363,19 +364,19 @@ public class RateLimitDemoController {
             @RequestParam(defaultValue = "blocked") String alertType,
             @Parameter(description = "时间字符串", example = "2025-09-01-14")
             @RequestParam(required = false) String time) {
-        
+
         if (time == null) {
             time = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd-HH"));
         }
-        
+
         Map<String, Object> alerts = rateLimitMonitor.getAlerts(alertType, time);
-        
+
         Map<String, Object> response = new HashMap<>();
         response.put("alertType", alertType);
         response.put("time", time);
         response.put("alerts", alerts);
         response.put("timestamp", LocalDateTime.now());
-        
+
         return Result.success(response);
     }
 

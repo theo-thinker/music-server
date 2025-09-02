@@ -10,9 +10,9 @@ import java.time.LocalDateTime;
 
 /**
  * 文件列表视图对象
- * 
+ * <p>
  * 用于展示文件列表的简要信息
- * 
+ *
  * @author Music Server Development Team
  * @version 1.0.0
  * @since 2025-09-01

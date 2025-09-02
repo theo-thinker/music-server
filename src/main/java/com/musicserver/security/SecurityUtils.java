@@ -6,9 +6,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 /**
  * Spring Security工具类
- * 
+ * <p>
  * 提供当前用户信息获取等安全相关的实用方法
- * 
+ *
  * @author Music Server Development Team
  * @version 1.0.0
  * @since 2025-09-01
@@ -17,7 +17,7 @@ public class SecurityUtils {
 
     /**
      * 获取当前登录用户ID
-     * 
+     *
      * @return 当前用户ID，如果未登录则抛出异常
      */
     public static Long getCurrentUserId() {
@@ -30,7 +30,7 @@ public class SecurityUtils {
 
     /**
      * 获取当前登录用户ID（可为空）
-     * 
+     *
      * @return 当前用户ID，如果未登录则返回null
      */
     public static Long getCurrentUserIdOrNull() {
@@ -43,7 +43,7 @@ public class SecurityUtils {
 
     /**
      * 获取当前登录用户名
-     * 
+     *
      * @return 当前用户名，如果未登录则返回null
      */
     public static String getCurrentUsername() {
@@ -56,7 +56,7 @@ public class SecurityUtils {
 
     /**
      * 获取当前用户详情
-     * 
+     *
      * @return 当前用户详情，如果未登录则返回null
      */
     public static UserDetails getCurrentUserDetails() {
@@ -69,7 +69,7 @@ public class SecurityUtils {
 
     /**
      * 获取当前认证信息
-     * 
+     *
      * @return 当前认证信息
      */
     public static Authentication getCurrentAuthentication() {
@@ -78,19 +78,19 @@ public class SecurityUtils {
 
     /**
      * 检查当前用户是否已认证
-     * 
+     *
      * @return 是否已认证
      */
     public static boolean isAuthenticated() {
         Authentication authentication = getCurrentAuthentication();
-        return authentication != null && 
-               authentication.isAuthenticated() && 
-               !"anonymousUser".equals(authentication.getPrincipal());
+        return authentication != null &&
+                authentication.isAuthenticated() &&
+                !"anonymousUser".equals(authentication.getPrincipal());
     }
 
     /**
      * 检查当前用户是否具有指定角色
-     * 
+     *
      * @param role 角色名称
      * @return 是否具有指定角色
      */
@@ -98,16 +98,16 @@ public class SecurityUtils {
         Authentication authentication = getCurrentAuthentication();
         if (authentication != null && authentication.getAuthorities() != null) {
             return authentication.getAuthorities().stream()
-                    .anyMatch(grantedAuthority -> 
-                        grantedAuthority.getAuthority().equals("ROLE_" + role) ||
-                        grantedAuthority.getAuthority().equals(role));
+                    .anyMatch(grantedAuthority ->
+                            grantedAuthority.getAuthority().equals("ROLE_" + role) ||
+                                    grantedAuthority.getAuthority().equals(role));
         }
         return false;
     }
 
     /**
      * 检查当前用户是否具有指定权限
-     * 
+     *
      * @param permission 权限名称
      * @return 是否具有指定权限
      */
@@ -115,8 +115,8 @@ public class SecurityUtils {
         Authentication authentication = getCurrentAuthentication();
         if (authentication != null && authentication.getAuthorities() != null) {
             return authentication.getAuthorities().stream()
-                    .anyMatch(grantedAuthority -> 
-                        grantedAuthority.getAuthority().equals(permission));
+                    .anyMatch(grantedAuthority ->
+                            grantedAuthority.getAuthority().equals(permission));
         }
         return false;
     }

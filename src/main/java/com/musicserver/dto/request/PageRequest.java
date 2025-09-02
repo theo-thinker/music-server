@@ -8,9 +8,9 @@ import jakarta.validation.constraints.Max;
 
 /**
  * 分页查询请求DTO
- * 
+ * <p>
  * 用于接收分页查询的通用参数
- * 
+ *
  * @author Music Server Development Team
  * @version 1.0.0
  * @since 2025-09-01

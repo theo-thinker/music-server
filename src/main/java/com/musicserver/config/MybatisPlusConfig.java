@@ -18,14 +18,14 @@ import java.time.LocalDateTime;
 
 /**
  * MyBatis Plus配置类
- * 
+ * <p>
  * 配置MyBatis Plus相关功能，包括：
  * 1. 分页插件
  * 2. 乐观锁插件
  * 3. 防止全表更新删除插件
  * 4. 自动填充字段处理器
  * 5. Mapper接口扫描
- * 
+ *
  * @author Music Server Development Team
  * @version 1.0.0
  * @since 2025-09-01
@@ -39,7 +39,7 @@ public class MybatisPlusConfig {
     /**
      * MyBatis Plus拦截器配置
      * 添加分页、乐观锁、防攻击等插件
-     * 
+     *
      * @return MybatisPlusInterceptor
      */
     @Bean
@@ -78,34 +78,34 @@ public class MybatisPlusConfig {
 
         /**
          * 插入时自动填充
-         * 
+         *
          * @param metaObject 元对象
          */
         @Override
         public void insertFill(MetaObject metaObject) {
             log.debug("开始插入填充...");
-            
+
             // 自动填充创建时间
             this.strictInsertFill(metaObject, "createdTime", LocalDateTime.class, LocalDateTime.now());
-            
+
             // 自动填充更新时间
             this.strictInsertFill(metaObject, "updatedTime", LocalDateTime.class, LocalDateTime.now());
-            
+
             log.debug("插入填充完成");
         }
 
         /**
          * 更新时自动填充
-         * 
+         *
          * @param metaObject 元对象
          */
         @Override
         public void updateFill(MetaObject metaObject) {
             log.debug("开始更新填充...");
-            
+
             // 自动填充更新时间
             this.strictUpdateFill(metaObject, "updatedTime", LocalDateTime.class, LocalDateTime.now());
-            
+
             log.debug("更新填充完成");
         }
     }

@@ -9,9 +9,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 /**
  * 文件上传请求DTO
- * 
+ * <p>
  * 用于接收文件上传请求的参数
- * 
+ *
  * @author Music Server Development Team
  * @version 1.0.0
  * @since 2025-09-01

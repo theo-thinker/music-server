@@ -9,9 +9,9 @@ import jakarta.validation.constraints.Size;
 
 /**
  * 用户注册请求DTO
- * 
+ * <p>
  * 用于接收用户注册时的请求参数
- * 
+ *
  * @author Music Server Development Team
  * @version 1.0.0
  * @since 2025-09-01

@@ -11,7 +11,7 @@ spring:
     url: jdbc:mysql://localhost:3306/music_server?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true&createDatabaseIfNotExist=true
     username: root
     password: sakura_dev_root
-    
+
   # Redis配置
   data:
     redis:

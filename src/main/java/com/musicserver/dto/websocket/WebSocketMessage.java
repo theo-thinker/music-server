@@ -12,9 +12,9 @@ import java.util.Map;
 
 /**
  * WebSocket消息基础DTO
- * 
+ * <p>
  * WebSocket消息的基础结构
- * 
+ *
  * @author Music Server Development Team
  * @version 1.0.0
  * @since 2025-09-01

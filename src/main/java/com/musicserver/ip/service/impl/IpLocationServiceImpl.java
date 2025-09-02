@@ -27,10 +27,10 @@ import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * IP定位服务实现类
- * 
+ * <p>
  * 基于ip2region实现的IP地理位置查询服务
  * 支持缓存、统计、限流等企业级功能
- * 
+ *
  * @author Music Server Development Team
  * @version 1.0.0
  * @since 2025-09-01
@@ -50,15 +50,15 @@ public class IpLocationServiceImpl implements IpLocationService {
     private final AtomicLong cacheHits = new AtomicLong(0);
     private final AtomicLong cacheErrors = new AtomicLong(0);
 
-    public IpLocationServiceImpl(Searcher ip2regionSearcher, 
-                               IpLocationProperties properties,
-                               StringRedisTemplate redisTemplate,
-                               Cache<String, IPLocation> localCache) {
+    public IpLocationServiceImpl(Searcher ip2regionSearcher,
+                                 IpLocationProperties properties,
+                                 StringRedisTemplate redisTemplate,
+                                 Cache<String, IPLocation> localCache) {
         this.ip2regionSearcher = ip2regionSearcher;
         this.properties = properties;
         this.redisTemplate = redisTemplate;
         this.localCache = localCache;
-        
+
         log.info("IP Location Service initialized with cache enabled: {}", properties.getEnableCache());
     }
 
@@ -70,10 +70,10 @@ public class IpLocationServiceImpl implements IpLocationService {
         try {
             // 参数验证
             validateIP(ip);
-            
+
             // 安全检查
             performSecurityCheck(ip);
-            
+
             // 尝试从缓存获取
             IPLocation cached = getFromCache(ip);
             if (cached != null) {
@@ -81,19 +81,19 @@ public class IpLocationServiceImpl implements IpLocationService {
                 log.debug("Cache hit for IP: {}", ip);
                 return cached;
             }
-            
+
             // 从ip2region查询
             IPLocation location = queryFromIP2Region(ip);
-            
+
             // 存储到缓存
             storeToCache(ip, location);
-            
+
             // 记录查询时间
             long queryTime = System.currentTimeMillis() - startTime;
             log.debug("IP location query completed for {} in {}ms", ip, queryTime);
-            
+
             return location;
-            
+
         } catch (Exception e) {
             log.error("Failed to get location for IP: {}", ip, e);
             if (e instanceof IpLocationException || e instanceof IpValidationException) {
@@ -109,7 +109,7 @@ public class IpLocationServiceImpl implements IpLocationService {
         if (location == null) {
             return createDefaultIPInfo(ip);
         }
-        
+
         return enhanceIPInfo(location.toIPInfo());
     }
 
@@ -128,17 +128,17 @@ public class IpLocationServiceImpl implements IpLocationService {
     @Override
     public Map<String, IPLocation> getLocationsBatch(List<String> ips) {
         Map<String, IPLocation> results = new HashMap<>();
-        
+
         if (ips == null || ips.isEmpty()) {
             return results;
         }
-        
+
         // 限制批量查询数量
         List<String> validIps = ips.stream()
                 .filter(IpValidationUtil::isValidIP)
                 .limit(100) // 限制最多100个
                 .toList();
-        
+
         for (String ip : validIps) {
             try {
                 results.put(ip, getLocation(ip));
@@ -147,7 +147,7 @@ public class IpLocationServiceImpl implements IpLocationService {
                 results.put(ip, createDefaultLocation(ip));
             }
         }
-        
+
         return results;
     }
 
@@ -155,12 +155,12 @@ public class IpLocationServiceImpl implements IpLocationService {
     public Map<String, IPInfo> getIPInfosBatch(List<String> ips) {
         Map<String, IPInfo> results = new HashMap<>();
         Map<String, IPLocation> locations = getLocationsBatch(ips);
-        
+
         for (Map.Entry<String, IPLocation> entry : locations.entrySet()) {
             IPLocation location = entry.getValue();
             results.put(entry.getKey(), location != null ? location.toIPInfo() : createDefaultIPInfo(entry.getKey()));
         }
-        
+
         return results;
     }
 
@@ -246,13 +246,13 @@ public class IpLocationServiceImpl implements IpLocationService {
     public void addToBlacklist(String ip, String reason, Integer durationHours) {
         String key = properties.getCacheKeyPrefix() + "blacklist:" + ip;
         String value = reason + "|" + System.currentTimeMillis();
-        
+
         if (durationHours != null && durationHours > 0) {
             redisTemplate.opsForValue().set(key, value, durationHours, TimeUnit.HOURS);
         } else {
             redisTemplate.opsForValue().set(key, value);
         }
-        
+
         log.info("Added IP {} to blacklist: {}", ip, reason);
     }
 
@@ -270,14 +270,14 @@ public class IpLocationServiceImpl implements IpLocationService {
             if (localCache != null) {
                 localCache.invalidateAll();
             }
-            
+
             // 清空Redis缓存
             String pattern = properties.getCacheKeyPrefix() + "*";
             Set<String> keys = redisTemplate.keys(pattern);
             if (keys != null && !keys.isEmpty()) {
                 redisTemplate.delete(keys);
             }
-            
+
             log.info("IP location cache cleared");
         } catch (Exception e) {
             log.error("Failed to clear IP location cache", e);
@@ -291,11 +291,11 @@ public class IpLocationServiceImpl implements IpLocationService {
             if (localCache != null) {
                 localCache.invalidate(ip);
             }
-            
+
             // 清空Redis缓存
             String key = IpLocationUtil.createCacheKey(properties.getCacheKeyPrefix(), ip);
             redisTemplate.delete(key);
-            
+
             log.debug("Cache cleared for IP: {}", ip);
         } catch (Exception e) {
             log.error("Failed to clear cache for IP: {}", ip, e);
@@ -307,9 +307,9 @@ public class IpLocationServiceImpl implements IpLocationService {
         if (ips == null || ips.isEmpty()) {
             return;
         }
-        
+
         log.info("Starting cache warmup for {} IPs", ips.size());
-        
+
         CompletableFuture.runAsync(() -> {
             for (String ip : ips) {
                 try {
@@ -328,26 +328,26 @@ public class IpLocationServiceImpl implements IpLocationService {
     @Override
     public Map<String, Object> getCacheStats() {
         Map<String, Object> stats = new HashMap<>();
-        
+
         stats.put("totalQueries", totalQueries.get());
         stats.put("cacheHits", cacheHits.get());
         stats.put("cacheErrors", cacheErrors.get());
         stats.put("hitRate", totalQueries.get() > 0 ? (double) cacheHits.get() / totalQueries.get() : 0.0);
-        
+
         if (localCache != null) {
             com.github.benmanes.caffeine.cache.stats.CacheStats cacheStats = localCache.stats();
             stats.put("localCacheHitRate", cacheStats.hitRate());
             stats.put("localCacheSize", localCache.estimatedSize());
             stats.put("localCacheEvictions", cacheStats.evictionCount());
         }
-        
+
         return stats;
     }
 
     @Override
     public Map<String, Object> getHealthStatus() {
         Map<String, Object> status = new HashMap<>();
-        
+
         try {
             // 测试ip2region查询
             String testResult = ip2regionSearcher.search("8.8.8.8");
@@ -355,7 +355,7 @@ public class IpLocationServiceImpl implements IpLocationService {
         } catch (Exception e) {
             status.put("ip2regionStatus", "ERROR: " + e.getMessage());
         }
-        
+
         try {
             // 测试Redis连接
             redisTemplate.opsForValue().get("test");
@@ -363,11 +363,11 @@ public class IpLocationServiceImpl implements IpLocationService {
         } catch (Exception e) {
             status.put("redisStatus", "ERROR: " + e.getMessage());
         }
-        
+
         status.put("localCacheStatus", localCache != null ? "OK" : "DISABLED");
         status.put("configValid", properties.isValid());
         status.put("securityEnabled", properties.isSecurityEnabled());
-        
+
         return status;
     }
 
@@ -397,7 +397,7 @@ public class IpLocationServiceImpl implements IpLocationService {
         if (!StringUtils.hasText(ip)) {
             throw IpValidationException.nullOrEmpty();
         }
-        
+
         if (!IpValidationUtil.isValidIP(ip)) {
             throw IpValidationException.invalidFormat(ip);
         }
@@ -408,7 +408,7 @@ public class IpLocationServiceImpl implements IpLocationService {
         if (isBlacklistIP(ip)) {
             throw IpValidationException.blacklisted(ip);
         }
-        
+
         // 检查是否被临时封禁
         String blacklistKey = properties.getCacheKeyPrefix() + "blacklist:" + ip;
         if (redisTemplate.hasKey(blacklistKey)) {
@@ -425,7 +425,7 @@ public class IpLocationServiceImpl implements IpLocationService {
                     return cached;
                 }
             }
-            
+
             // 再尝试Redis缓存
             if (properties.getEnableCache()) {
                 String key = IpLocationUtil.createCacheKey(properties.getCacheKeyPrefix(), ip);
@@ -438,7 +438,7 @@ public class IpLocationServiceImpl implements IpLocationService {
             log.warn("Failed to get IP location from cache: {}", ip, e);
             cacheErrors.incrementAndGet();
         }
-        
+
         return null;
     }
 
@@ -446,18 +446,18 @@ public class IpLocationServiceImpl implements IpLocationService {
         if (!properties.getEnableCache() || location == null) {
             return;
         }
-        
+
         try {
             // 存储到本地缓存
             if (localCache != null) {
                 localCache.put(ip, location);
             }
-            
+
             // 存储到Redis缓存
             String key = IpLocationUtil.createCacheKey(properties.getCacheKeyPrefix(), ip);
             String value = serializeLocation(location);
             redisTemplate.opsForValue().set(key, value, properties.getCacheExpireSeconds(), TimeUnit.SECONDS);
-            
+
         } catch (Exception e) {
             log.warn("Failed to store IP location to cache: {}", ip, e);
             cacheErrors.incrementAndGet();
@@ -505,12 +505,12 @@ public class IpLocationServiceImpl implements IpLocationService {
         if (ipInfo == null) {
             return null;
         }
-        
+
         // 增强IP信息
         ipInfo.setIsPrivate(IpValidationUtil.isPrivateIP(ipInfo.getIp()));
         ipInfo.setIpType(IpValidationUtil.getIPType(ipInfo.getIp()));
         ipInfo.setUpdatedTime(LocalDateTime.now());
-        
+
         return ipInfo;
     }
 
@@ -518,18 +518,18 @@ public class IpLocationServiceImpl implements IpLocationService {
         if (!properties.getEnableStatistics()) {
             return;
         }
-        
+
         // 记录访问统计
         String today = LocalDate.now().toString();
         String statsKey = IpLocationUtil.createStatsCacheKey(properties.getCacheKeyPrefix(), ip, today);
-        
+
         // 这里应该实现具体的统计记录逻辑
         log.debug("Recording access for IP: {}, URI: {}, User: {}", ip, requestUri, userId);
     }
 
     private String serializeLocation(IPLocation location) {
         // 简单的序列化实现，实际应该使用JSON
-        return String.format("%s|%s|%s|%s|%s", 
+        return String.format("%s|%s|%s|%s|%s",
                 location.getIp(),
                 location.getCountry() != null ? location.getCountry() : "",
                 location.getRegion() != null ? location.getRegion() : "",
@@ -541,12 +541,12 @@ public class IpLocationServiceImpl implements IpLocationService {
         if (!StringUtils.hasText(data)) {
             return null;
         }
-        
+
         String[] parts = data.split("\\|", -1);
         if (parts.length < 5) {
             return null;
         }
-        
+
         return IPLocation.builder()
                 .ip(parts[0])
                 .country(StringUtils.hasText(parts[1]) ? parts[1] : "未知")

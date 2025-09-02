@@ -19,10 +19,10 @@ import java.util.Map;
 
 /**
  * WebSocket REST API控制器
- * 
+ * <p>
  * 提供WebSocket相关的REST接口
  * 包括在线状态查询、播放状态获取、系统通知发送等
- * 
+ *
  * @author Music Server Development Team
  * @version 1.0.0
  * @since 2025-09-01
@@ -40,7 +40,7 @@ public class WebSocketController {
 
     /**
      * 获取在线用户列表
-     * 
+     *
      * @return 在线用户列表
      */
     @GetMapping("/online/users")
@@ -48,7 +48,7 @@ public class WebSocketController {
     public Result<List<UserOnlineStatusMessage>> getOnlineUsers() {
         try {
             List<UserOnlineStatusMessage> onlineUsers = onlineUserService.getOnlineUsers();
-            
+
             return Result.success(onlineUsers, "获取在线用户列表成功");
         } catch (Exception e) {
             log.error("获取在线用户列表失败", e);
@@ -58,7 +58,7 @@ public class WebSocketController {
 
     /**
      * 获取在线用户数量
-     * 
+     *
      * @return 在线用户数量
      */
     @GetMapping("/online/count")
@@ -66,7 +66,7 @@ public class WebSocketController {
     public Result<Integer> getOnlineUserCount() {
         try {
             int count = onlineUserService.getOnlineUserCount();
-            
+
             return Result.success(count, "获取在线用户数量成功");
         } catch (Exception e) {
             log.error("获取在线用户数量失败", e);
@@ -76,7 +76,7 @@ public class WebSocketController {
 
     /**
      * 检查用户是否在线
-     * 
+     *
      * @param userId 用户ID
      * @return 是否在线
      */
@@ -86,7 +86,7 @@ public class WebSocketController {
             @Parameter(description = "用户ID") @PathVariable Long userId) {
         try {
             boolean isOnline = onlineUserService.isUserOnline(userId);
-            
+
             return Result.success(isOnline, "检查用户在线状态成功");
         } catch (Exception e) {
             log.error("检查用户在线状态失败: userId={}", userId, e);
@@ -96,7 +96,7 @@ public class WebSocketController {
 
     /**
      * 获取用户播放状态
-     * 
+     *
      * @param currentUser 当前用户
      * @return 播放状态
      */
@@ -105,7 +105,7 @@ public class WebSocketController {
     public Result<MusicPlayStatusMessage> getUserPlayStatus(@CurrentUser Long currentUser) {
         try {
             MusicPlayStatusMessage status = musicPlayService.getUserPlayStatus(currentUser);
-            
+
             return Result.success(status, "获取播放状态成功");
         } catch (Exception e) {
             log.error("获取用户播放状态失败: userId={}", currentUser, e);
@@ -115,7 +115,7 @@ public class WebSocketController {
 
     /**
      * 获取房间播放状态
-     * 
+     *
      * @param roomId 房间ID
      * @return 房间播放状态
      */
@@ -125,7 +125,7 @@ public class WebSocketController {
             @Parameter(description = "房间ID") @PathVariable String roomId) {
         try {
             MusicPlayStatusMessage status = musicPlayService.getRoomPlayStatus(roomId);
-            
+
             return Result.success(status, "获取房间播放状态成功");
         } catch (Exception e) {
             log.error("获取房间播放状态失败: roomId={}", roomId, e);
@@ -135,7 +135,7 @@ public class WebSocketController {
 
     /**
      * 发送系统通知
-     * 
+     *
      * @param notification 系统通知消息
      * @return 发送结果
      */
@@ -145,19 +145,19 @@ public class WebSocketController {
         try {
             notification.setNotificationTime(LocalDateTime.now());
             notification.setNotificationId("sys_" + System.currentTimeMillis());
-            
+
             WebSocketMessage message = WebSocketMessage.builder()
                     .type("SYSTEM_NOTIFICATION")
                     .content(notification)
                     .timestamp(LocalDateTime.now())
                     .build();
-            
+
             // 广播给所有在线用户
             messagingTemplate.convertAndSend("/topic/system/notifications", message);
-            
-            log.info("发送系统通知成功: type={}, title={}", 
+
+            log.info("发送系统通知成功: type={}, title={}",
                     notification.getNotificationType(), notification.getTitle());
-            
+
             return Result.success("发送系统通知成功");
         } catch (Exception e) {
             log.error("发送系统通知失败", e);
@@ -167,8 +167,8 @@ public class WebSocketController {
 
     /**
      * 向指定用户发送通知
-     * 
-     * @param userId 用户ID
+     *
+     * @param userId       用户ID
      * @param notification 通知消息
      * @return 发送结果
      */
@@ -181,23 +181,23 @@ public class WebSocketController {
             notification.setNotificationTime(LocalDateTime.now());
             notification.setNotificationId("user_" + System.currentTimeMillis());
             notification.setTargetUserId(userId);
-            
+
             WebSocketMessage message = WebSocketMessage.builder()
                     .type("USER_NOTIFICATION")
                     .content(notification)
                     .timestamp(LocalDateTime.now())
                     .build();
-            
+
             // 发送给指定用户
             messagingTemplate.convertAndSendToUser(
                     userId.toString(),
                     "/queue/notifications",
                     message
             );
-            
-            log.info("发送用户通知成功: userId={}, type={}", 
+
+            log.info("发送用户通知成功: userId={}, type={}",
                     userId, notification.getNotificationType());
-            
+
             return Result.success("发送用户通知成功");
         } catch (Exception e) {
             log.error("发送用户通知失败: userId={}", userId, e);
@@ -207,7 +207,7 @@ public class WebSocketController {
 
     /**
      * 强制用户下线
-     * 
+     *
      * @param userId 用户ID
      * @param reason 下线原因
      * @return 操作结果
@@ -222,7 +222,7 @@ public class WebSocketController {
             if (session == null) {
                 return Result.error("用户不在线");
             }
-            
+
             // 发送强制下线通知
             SystemNotificationMessage notification = SystemNotificationMessage.builder()
                     .notificationType("FORCE_LOGOUT")
@@ -232,24 +232,24 @@ public class WebSocketController {
                     .targetUserId(userId)
                     .notificationTime(LocalDateTime.now())
                     .build();
-            
+
             WebSocketMessage message = WebSocketMessage.builder()
                     .type("FORCE_LOGOUT")
                     .content(notification)
                     .timestamp(LocalDateTime.now())
                     .build();
-            
+
             messagingTemplate.convertAndSendToUser(
                     userId.toString(),
                     "/queue/system/force-logout",
                     message
             );
-            
+
             // 移除用户
             onlineUserService.removeOnlineUser(userId, session.getSessionId());
-            
+
             log.info("强制用户下线成功: userId={}, reason={}", userId, reason);
-            
+
             return Result.success("强制用户下线成功");
         } catch (Exception e) {
             log.error("强制用户下线失败: userId={}", userId, e);
@@ -259,10 +259,10 @@ public class WebSocketController {
 
     /**
      * 广播音乐推荐
-     * 
+     *
      * @param musicId 音乐ID
-     * @param title 音乐标题
-     * @param artist 艺术家
+     * @param title   音乐标题
+     * @param artist  艺术家
      * @return 广播结果
      */
     @PostMapping("/broadcast/music-recommend")
@@ -284,17 +284,17 @@ public class WebSocketController {
                     .relatedEntityType("MUSIC")
                     .notificationTime(LocalDateTime.now())
                     .build();
-            
+
             WebSocketMessage message = WebSocketMessage.builder()
                     .type("MUSIC_RECOMMEND")
                     .content(notification)
                     .timestamp(LocalDateTime.now())
                     .build();
-            
+
             messagingTemplate.convertAndSend("/topic/music/recommend", message);
-            
+
             log.info("广播音乐推荐成功: musicId={}, title={}", musicId, title);
-            
+
             return Result.success("广播音乐推荐成功");
         } catch (Exception e) {
             log.error("广播音乐推荐失败: musicId={}", musicId, e);
@@ -304,7 +304,7 @@ public class WebSocketController {
 
     /**
      * 获取WebSocket连接统计信息
-     * 
+     *
      * @return 统计信息
      */
     @GetMapping("/stats")
@@ -316,7 +316,7 @@ public class WebSocketController {
                     "timestamp", LocalDateTime.now(),
                     "serverStatus", "RUNNING"
             );
-            
+
             return Result.success(stats, "获取统计信息成功");
         } catch (Exception e) {
             log.error("获取WebSocket统计信息失败", e);
@@ -326,7 +326,7 @@ public class WebSocketController {
 
     /**
      * 测试WebSocket连接
-     * 
+     *
      * @return 测试结果
      */
     @PostMapping("/test/ping")
@@ -338,9 +338,9 @@ public class WebSocketController {
                     .content("WebSocket连接测试消息")
                     .timestamp(LocalDateTime.now())
                     .build();
-            
+
             messagingTemplate.convertAndSend("/topic/test/ping", testMessage);
-            
+
             return Result.success("WebSocket连接测试消息发送成功");
         } catch (Exception e) {
             log.error("WebSocket连接测试失败", e);

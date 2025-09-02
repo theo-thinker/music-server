@@ -15,19 +15,20 @@ import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import jakarta.servlet.MultipartConfigElement;
+
 import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.TimeZone;
 
 /**
  * Web配置类
- * 
+ * <p>
  * 配置Web相关设置，包括：
  * 1. 静态资源映射
  * 2. 文件上传配置
  * 3. Jackson序列化配置
  * 4. HTTP消息转换器
- * 
+ *
  * @author Music Server Development Team
  * @version 1.0.0
  * @since 2025-09-01
@@ -63,7 +64,7 @@ public class WebConfig implements WebMvcConfigurer {
     /**
      * 配置静态资源处理器
      * 将静态资源URL映射到文件系统路径
-     * 
+     *
      * @param registry 资源处理器注册表
      */
     @Override
@@ -76,7 +77,7 @@ public class WebConfig implements WebMvcConfigurer {
         // 配置Knife4j静态资源
         registry.addResourceHandler("doc.html")
                 .addResourceLocations("classpath:/META-INF/resources/");
-        
+
         registry.addResourceHandler("/webjars/**")
                 .addResourceLocations("classpath:/META-INF/resources/webjars/");
 
@@ -86,55 +87,55 @@ public class WebConfig implements WebMvcConfigurer {
     /**
      * 配置HTTP消息转换器
      * 自定义Jackson的序列化配置
-     * 
+     *
      * @param converters HTTP消息转换器列表
      */
     @Override
     public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
         // 创建Jackson转换器
-        MappingJackson2HttpMessageConverter jackson2HttpMessageConverter = 
-            new MappingJackson2HttpMessageConverter();
-        
+        MappingJackson2HttpMessageConverter jackson2HttpMessageConverter =
+                new MappingJackson2HttpMessageConverter();
+
         // 设置自定义的ObjectMapper
         jackson2HttpMessageConverter.setObjectMapper(objectMapper());
-        
+
         // 添加到转换器列表的首位，优先使用
-        converters.add(0, jackson2HttpMessageConverter);
-        
+        converters.addFirst(jackson2HttpMessageConverter);
+
         log.info("HTTP消息转换器配置完成");
     }
 
     /**
      * 自定义ObjectMapper配置
      * 配置JSON序列化和反序列化规则
-     * 
+     *
      * @return 配置好的ObjectMapper
      */
     @Bean
     public ObjectMapper objectMapper() {
         ObjectMapper mapper = new ObjectMapper();
-        
+
         // 注册Java8时间模块
         mapper.registerModule(new JavaTimeModule());
-        
+
         // 禁用将日期序列化为时间戳
         mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
-        
+
         // 设置日期时间格式
         mapper.setDateFormat(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"));
-        
+
         // 设置时区
         mapper.setTimeZone(TimeZone.getTimeZone("Asia/Shanghai"));
-        
+
         // 忽略未知属性
         mapper.configure(com.fasterxml.jackson.databind.DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        
+
         // 忽略空Bean转JSON的错误
         mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
-        
+
         // 忽略null值字段
         mapper.setSerializationInclusion(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL);
-        
+
         log.info("ObjectMapper配置完成");
         return mapper;
     }
@@ -142,25 +143,25 @@ public class WebConfig implements WebMvcConfigurer {
     /**
      * 文件上传配置
      * 设置文件上传的大小限制和临时目录
-     * 
+     *
      * @return 文件上传配置元素
      */
     @Bean
     public MultipartConfigElement multipartConfigElement() {
         MultipartConfigFactory factory = new MultipartConfigFactory();
-        
+
         // 设置单个文件最大大小
         factory.setMaxFileSize(DataSize.ofMegabytes(maxFileSize));
-        
+
         // 设置总上传数据最大大小
         factory.setMaxRequestSize(DataSize.ofMegabytes(maxFileSize * 2));
-        
+
         // 设置缓冲区大小
         factory.setFileSizeThreshold(DataSize.ofKilobytes(2));
-        
+
         // 设置临时目录
         factory.setLocation(uploadPath + "temp/");
-        
+
         log.info("文件上传配置完成 - 最大文件大小: {}MB, 上传路径: {}", maxFileSize, uploadPath);
         return factory.createMultipartConfig();
     }

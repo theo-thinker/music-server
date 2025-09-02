@@ -16,10 +16,10 @@ import java.util.stream.Collectors;
 
 /**
  * 用户在线状态管理服务
- * 
+ * <p>
  * 管理用户在线状态、会话信息
  * 提供在线用户查询、状态广播等功能
- * 
+ *
  * @author Music Server Development Team
  * @version 1.0.0
  * @since 2025-09-01
@@ -34,7 +34,7 @@ public class OnlineUserService {
 
     // 在线用户缓存 userId -> UserSession
     private final Map<Long, UserSession> onlineUsers = new ConcurrentHashMap<>();
-    
+
     // 会话映射 sessionId -> userId
     private final Map<String, Long> sessionUserMap = new ConcurrentHashMap<>();
 
@@ -44,9 +44,9 @@ public class OnlineUserService {
 
     /**
      * 添加用户到在线列表
-     * 
-     * @param userId 用户ID
-     * @param username 用户名
+     *
+     * @param userId    用户ID
+     * @param username  用户名
      * @param sessionId 会话ID
      */
     public void addOnlineUser(Long userId, String username, String sessionId) {
@@ -78,8 +78,8 @@ public class OnlineUserService {
 
     /**
      * 从在线列表移除用户
-     * 
-     * @param userId 用户ID
+     *
+     * @param userId    用户ID
      * @param sessionId 会话ID
      */
     public void removeOnlineUser(Long userId, String sessionId) {
@@ -94,7 +94,7 @@ public class OnlineUserService {
             redisTemplate.opsForSet().remove(ONLINE_USERS_KEY, userId);
 
             if (session != null) {
-                log.info("用户下线: userId={}, username={}, sessionId={}", 
+                log.info("用户下线: userId={}, username={}, sessionId={}",
                         userId, session.getUsername(), sessionId);
             }
         } catch (Exception e) {
@@ -104,7 +104,7 @@ public class OnlineUserService {
 
     /**
      * 更新用户活跃时间
-     * 
+     *
      * @param userId 用户ID
      */
     public void updateUserActivity(Long userId) {
@@ -112,7 +112,7 @@ public class OnlineUserService {
             UserSession session = onlineUsers.get(userId);
             if (session != null) {
                 session.setLastActiveTime(LocalDateTime.now());
-                
+
                 // 更新Redis
                 String redisKey = USER_SESSION_KEY + userId;
                 redisTemplate.opsForValue().set(redisKey, session, SESSION_TIMEOUT, TimeUnit.MINUTES);
@@ -124,7 +124,7 @@ public class OnlineUserService {
 
     /**
      * 获取在线用户列表
-     * 
+     *
      * @return 在线用户列表
      */
     public List<UserOnlineStatusMessage> getOnlineUsers() {
@@ -140,7 +140,7 @@ public class OnlineUserService {
 
     /**
      * 获取在线用户数量
-     * 
+     *
      * @return 在线用户数量
      */
     public int getOnlineUserCount() {
@@ -149,7 +149,7 @@ public class OnlineUserService {
 
     /**
      * 检查用户是否在线
-     * 
+     *
      * @param userId 用户ID
      * @return 是否在线
      */
@@ -159,7 +159,7 @@ public class OnlineUserService {
 
     /**
      * 获取用户会话信息
-     * 
+     *
      * @param userId 用户ID
      * @return 用户会话信息
      */
@@ -169,7 +169,7 @@ public class OnlineUserService {
 
     /**
      * 根据会话ID获取用户ID
-     * 
+     *
      * @param sessionId 会话ID
      * @return 用户ID
      */
@@ -179,8 +179,8 @@ public class OnlineUserService {
 
     /**
      * 广播用户上线通知
-     * 
-     * @param userId 用户ID
+     *
+     * @param userId   用户ID
      * @param username 用户名
      */
     public void broadcastUserOnline(Long userId, String username) {
@@ -202,7 +202,7 @@ public class OnlineUserService {
 
             // 广播给所有在线用户
             messagingTemplate.convertAndSend("/topic/online/status", message);
-            
+
             log.debug("广播用户上线通知: userId={}, username={}", userId, username);
         } catch (Exception e) {
             log.error("广播用户上线通知失败: userId={}", userId, e);
@@ -211,8 +211,8 @@ public class OnlineUserService {
 
     /**
      * 广播用户下线通知
-     * 
-     * @param userId 用户ID
+     *
+     * @param userId   用户ID
      * @param username 用户名
      */
     public void broadcastUserOffline(Long userId, String username) {
@@ -233,7 +233,7 @@ public class OnlineUserService {
 
             // 广播给所有在线用户
             messagingTemplate.convertAndSend("/topic/online/status", message);
-            
+
             log.debug("广播用户下线通知: userId={}, username={}", userId, username);
         } catch (Exception e) {
             log.error("广播用户下线通知失败: userId={}", userId, e);
@@ -242,13 +242,13 @@ public class OnlineUserService {
 
     /**
      * 发送在线用户列表给指定用户
-     * 
+     *
      * @param userId 用户ID
      */
     public void sendOnlineUsersToUser(Long userId) {
         try {
             List<UserOnlineStatusMessage> onlineUsersList = getOnlineUsers();
-            
+
             WebSocketMessage message = WebSocketMessage.builder()
                     .type("ONLINE_USERS_LIST")
                     .content(onlineUsersList)
@@ -257,11 +257,11 @@ public class OnlineUserService {
 
             // 发送给指定用户
             messagingTemplate.convertAndSendToUser(
-                    userId.toString(), 
-                    "/queue/online/users", 
+                    userId.toString(),
+                    "/queue/online/users",
                     message
             );
-            
+
             log.debug("发送在线用户列表给用户: userId={}, count={}", userId, onlineUsersList.size());
         } catch (Exception e) {
             log.error("发送在线用户列表失败: userId={}", userId, e);
@@ -270,7 +270,7 @@ public class OnlineUserService {
 
     /**
      * 更新用户状态
-     * 
+     *
      * @param userId 用户ID
      * @param status 状态
      */
@@ -280,11 +280,11 @@ public class OnlineUserService {
             if (session != null) {
                 session.setStatus(status);
                 session.setLastActiveTime(LocalDateTime.now());
-                
+
                 // 更新Redis
                 String redisKey = USER_SESSION_KEY + userId;
                 redisTemplate.opsForValue().set(redisKey, session, SESSION_TIMEOUT, TimeUnit.MINUTES);
-                
+
                 // 广播状态变化
                 broadcastUserStatusChange(userId, session.getUsername(), status);
             }
@@ -295,10 +295,10 @@ public class OnlineUserService {
 
     /**
      * 广播用户状态变化
-     * 
-     * @param userId 用户ID
+     *
+     * @param userId   用户ID
      * @param username 用户名
-     * @param status 状态
+     * @param status   状态
      */
     private void broadcastUserStatusChange(Long userId, String username, String status) {
         try {
@@ -350,7 +350,7 @@ public class OnlineUserService {
 
     /**
      * 转换为状态消息
-     * 
+     *
      * @param session 用户会话
      * @return 状态消息
      */

@@ -11,9 +11,9 @@ import java.time.LocalDateTime;
 
 /**
  * 用户在线状态消息DTO
- * 
+ * <p>
  * 用于WebSocket传输用户在线状态信息
- * 
+ *
  * @author Music Server Development Team
  * @version 1.0.0
  * @since 2025-09-01

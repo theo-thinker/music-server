@@ -11,9 +11,9 @@ import java.time.LocalDateTime;
 
 /**
  * 聊天消息DTO
- * 
+ * <p>
  * 用于WebSocket传输聊天消息
- * 
+ *
  * @author Music Server Development Team
  * @version 1.0.0
  * @since 2025-09-01

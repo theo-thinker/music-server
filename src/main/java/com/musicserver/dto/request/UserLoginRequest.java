@@ -7,9 +7,9 @@ import jakarta.validation.constraints.NotBlank;
 
 /**
  * 用户登录请求DTO
- * 
+ * <p>
  * 用于接收用户登录时的请求参数
- * 
+ *
  * @author Music Server Development Team
  * @version 1.0.0
  * @since 2025-09-01

@@ -7,9 +7,9 @@ import java.time.LocalDateTime;
 
 /**
  * 音乐信息响应DTO
- * 
+ * <p>
  * 用于返回音乐详细信息
- * 
+ *
  * @author Music Server Development Team
  * @version 1.0.0
  * @since 2025-09-01

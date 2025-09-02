@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
+
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
@@ -26,10 +27,10 @@ import java.util.concurrent.CompletableFuture;
 
 /**
  * IP定位控制器
- * 
+ * <p>
  * 提供IP地理位置查询和统计相关的REST API接口
  * 支持单个查询、批量查询、统计分析等功能
- * 
+ *
  * @author Music Server Development Team
  * @version 1.0.0
  * @since 2025-09-01
@@ -50,10 +51,10 @@ public class IpLocationController {
         try {
             String ip = IpLocationUtil.getRealIP(request);
             IPInfo ipInfo = ipLocationService.getIPInfo(ip);
-            
+
             log.debug("Current IP location query: {} -> {}", ip, ipInfo.getLocation());
             return Result.success(ipInfo);
-            
+
         } catch (Exception e) {
             log.error("Failed to get current IP location", e);
             return Result.error("获取当前IP位置信息失败: " + e.getMessage());
@@ -68,7 +69,7 @@ public class IpLocationController {
         try {
             IPLocation location = ipLocationService.getLocation(ip);
             return Result.success(location);
-            
+
         } catch (Exception e) {
             log.error("Failed to get IP location for: {}", ip, e);
             return Result.error("查询IP位置信息失败: " + e.getMessage());
@@ -83,7 +84,7 @@ public class IpLocationController {
         try {
             IPInfo ipInfo = ipLocationService.getIPInfo(ip);
             return Result.success(ipInfo);
-            
+
         } catch (Exception e) {
             log.error("Failed to get IP info for: {}", ip, e);
             return Result.error("查询IP详细信息失败: " + e.getMessage());
@@ -112,14 +113,14 @@ public class IpLocationController {
             if (ips == null || ips.isEmpty()) {
                 return Result.error("IP地址列表不能为空");
             }
-            
+
             if (ips.size() > 100) {
                 return Result.error("批量查询IP数量不能超过100个");
             }
-            
+
             Map<String, IPLocation> locations = ipLocationService.getLocationsBatch(ips);
             return Result.success(locations);
-            
+
         } catch (Exception e) {
             log.error("Failed to get IP locations batch", e);
             return Result.error("批量查询IP位置信息失败: " + e.getMessage());
@@ -135,14 +136,14 @@ public class IpLocationController {
             if (ips == null || ips.isEmpty()) {
                 return Result.error("IP地址列表不能为空");
             }
-            
+
             if (ips.size() > 100) {
                 return Result.error("批量查询IP数量不能超过100个");
             }
-            
+
             Map<String, IPInfo> infos = ipLocationService.getIPInfosBatch(ips);
             return Result.success(infos);
-            
+
         } catch (Exception e) {
             log.error("Failed to get IP infos batch", e);
             return Result.error("批量查询IP详细信息失败: " + e.getMessage());
@@ -163,7 +164,7 @@ public class IpLocationController {
                     "ipv6", ipLocationService.isIPv6(ip)
             );
             return Result.success(result);
-            
+
         } catch (Exception e) {
             log.error("Failed to validate IP: {}", ip, e);
             return Result.error("验证IP地址失败: " + e.getMessage());
@@ -186,10 +187,10 @@ public class IpLocationController {
             if (endDate == null) {
                 endDate = LocalDate.now();
             }
-            
+
             IPStatistics statistics = ipLocationService.getStatistics(ip, startDate, endDate);
             return Result.success(statistics);
-            
+
         } catch (Exception e) {
             log.error("Failed to get IP statistics for: {}", ip, e);
             return Result.error("获取IP统计信息失败: " + e.getMessage());
@@ -204,7 +205,7 @@ public class IpLocationController {
         try {
             IPStatistics statistics = ipLocationService.getTodayStatistics(ip);
             return Result.success(statistics);
-            
+
         } catch (Exception e) {
             log.error("Failed to get today IP statistics for: {}", ip, e);
             return Result.error("获取IP今日统计信息失败: " + e.getMessage());
@@ -222,10 +223,10 @@ public class IpLocationController {
             if (date == null) {
                 date = LocalDate.now();
             }
-            
+
             List<IPStatistics> topIPs = ipLocationService.getTopIPs(limit, date);
             return Result.success(topIPs);
-            
+
         } catch (Exception e) {
             log.error("Failed to get top IPs", e);
             return Result.error("获取热门IP列表失败: " + e.getMessage());
@@ -242,7 +243,7 @@ public class IpLocationController {
         try {
             List<IPStatistics> riskIPs = ipLocationService.getRiskIPs(limit, riskLevel);
             return Result.success(riskIPs);
-            
+
         } catch (Exception e) {
             log.error("Failed to get risk IPs", e);
             return Result.error("获取风险IP列表失败: " + e.getMessage());
@@ -261,7 +262,7 @@ public class IpLocationController {
         try {
             ipLocationService.addToBlacklist(ip, reason, durationHours);
             return Result.success();
-            
+
         } catch (Exception e) {
             log.error("Failed to add IP to blacklist: {}", ip, e);
             return Result.error("添加IP到黑名单失败: " + e.getMessage());
@@ -276,7 +277,7 @@ public class IpLocationController {
         try {
             ipLocationService.removeFromBlacklist(ip);
             return Result.success();
-            
+
         } catch (Exception e) {
             log.error("Failed to remove IP from blacklist: {}", ip, e);
             return Result.error("从黑名单移除IP失败: " + e.getMessage());
@@ -296,7 +297,7 @@ public class IpLocationController {
                     "private", ipLocationService.isPrivateIP(ip)
             );
             return Result.success(result);
-            
+
         } catch (Exception e) {
             log.error("Failed to check IP security for: {}", ip, e);
             return Result.error("检查IP安全状态失败: " + e.getMessage());
@@ -309,7 +310,7 @@ public class IpLocationController {
         try {
             ipLocationService.clearCache();
             return Result.success();
-            
+
         } catch (Exception e) {
             log.error("Failed to clear cache", e);
             return Result.error("清空缓存失败: " + e.getMessage());
@@ -324,7 +325,7 @@ public class IpLocationController {
         try {
             ipLocationService.clearCache(ip);
             return Result.success();
-            
+
         } catch (Exception e) {
             log.error("Failed to clear cache for IP: {}", ip, e);
             return Result.error("清空IP缓存失败: " + e.getMessage());
@@ -340,14 +341,14 @@ public class IpLocationController {
             if (ips == null || ips.isEmpty()) {
                 return Result.error("IP地址列表不能为空");
             }
-            
+
             if (ips.size() > 1000) {
                 return Result.error("预热IP数量不能超过1000个");
             }
-            
+
             ipLocationService.warmupCache(ips);
             return Result.success();
-            
+
         } catch (Exception e) {
             log.error("Failed to warmup cache", e);
             return Result.error("预热缓存失败: " + e.getMessage());
@@ -360,7 +361,7 @@ public class IpLocationController {
         try {
             Map<String, Object> stats = ipLocationService.getCacheStats();
             return Result.success(stats);
-            
+
         } catch (Exception e) {
             log.error("Failed to get cache stats", e);
             return Result.error("获取缓存统计信息失败: " + e.getMessage());
@@ -373,7 +374,7 @@ public class IpLocationController {
         try {
             Map<String, Object> status = ipLocationService.getHealthStatus();
             return Result.success(status);
-            
+
         } catch (Exception e) {
             log.error("Failed to get health status", e);
             return Result.error("获取服务健康状态失败: " + e.getMessage());
@@ -393,10 +394,10 @@ public class IpLocationController {
             if (startDate.isAfter(endDate)) {
                 return Result.error("开始日期不能晚于结束日期");
             }
-            
+
             String filePath = ipLocationService.exportStatistics(startDate, endDate, format);
             return Result.success(filePath);
-            
+
         } catch (Exception e) {
             log.error("Failed to export statistics", e);
             return Result.error("导出统计数据失败: " + e.getMessage());

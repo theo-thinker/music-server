@@ -12,9 +12,9 @@ import java.util.Map;
 
 /**
  * 系统通知消息DTO
- * 
+ * <p>
  * 用于WebSocket传输系统通知信息
- * 
+ *
  * @author Music Server Development Team
  * @version 1.0.0
  * @since 2025-09-01

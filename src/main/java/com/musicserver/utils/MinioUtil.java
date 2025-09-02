@@ -21,10 +21,10 @@ import java.util.regex.Pattern;
 
 /**
  * Minio工具类
- * 
+ * <p>
  * 提供便捷的文件操作方法和工具函数
  * 包含文件验证、路径处理、元数据操作等功能
- * 
+ *
  * @author Music Server Development Team
  * @version 1.0.0
  * @since 2025-09-01
@@ -51,7 +51,7 @@ public class MinioUtil {
 
     /**
      * 验证文件是否为有效的音乐文件
-     * 
+     *
      * @param file 文件
      * @return 是否有效
      */
@@ -71,7 +71,7 @@ public class MinioUtil {
 
     /**
      * 验证文件是否为有效的图片文件
-     * 
+     *
      * @param file 文件
      * @return 是否有效
      */
@@ -91,7 +91,7 @@ public class MinioUtil {
 
     /**
      * 验证文件是否为有效的歌词文件
-     * 
+     *
      * @param file 文件
      * @return 是否有效
      */
@@ -106,14 +106,14 @@ public class MinioUtil {
         }
 
         List<String> allowedTypes = minioProperties.getUpload().getAllowedLyricTypes();
-        return allowedTypes.contains(contentType.toLowerCase()) || 
-               file.getOriginalFilename() != null && 
-               file.getOriginalFilename().toLowerCase().endsWith(".lrc");
+        return allowedTypes.contains(contentType.toLowerCase()) ||
+                file.getOriginalFilename() != null &&
+                        file.getOriginalFilename().toLowerCase().endsWith(".lrc");
     }
 
     /**
      * 验证文件大小是否在允许范围内
-     * 
+     *
      * @param file 文件
      * @return 是否在允许范围内
      */
@@ -128,7 +128,7 @@ public class MinioUtil {
 
     /**
      * 验证存储桶名称是否有效
-     * 
+     *
      * @param bucketName 存储桶名称
      * @return 是否有效
      */
@@ -148,7 +148,7 @@ public class MinioUtil {
 
     /**
      * 验证对象名称是否有效
-     * 
+     *
      * @param objectName 对象名称
      * @return 是否有效
      */
@@ -172,7 +172,7 @@ public class MinioUtil {
 
     /**
      * 获取文件的MIME类型
-     * 
+     *
      * @param filename 文件名
      * @return MIME类型
      */
@@ -182,7 +182,7 @@ public class MinioUtil {
         }
 
         String extension = getFileExtension(filename).toLowerCase();
-        
+
         return switch (extension) {
             // 音频文件
             case "mp3" -> "audio/mpeg";
@@ -191,20 +191,20 @@ public class MinioUtil {
             case "aac" -> "audio/aac";
             case "ogg" -> "audio/ogg";
             case "m4a" -> "audio/mp4";
-            
+
             // 图片文件
             case "jpg", "jpeg" -> "image/jpeg";
             case "png" -> "image/png";
             case "gif" -> "image/gif";
             case "webp" -> "image/webp";
             case "bmp" -> "image/bmp";
-            
+
             // 文本文件
             case "txt" -> "text/plain";
             case "lrc" -> "text/plain";
             case "json" -> "application/json";
             case "xml" -> "application/xml";
-            
+
             // 默认
             default -> "application/octet-stream";
         };
@@ -212,7 +212,7 @@ public class MinioUtil {
 
     /**
      * 获取文件扩展名
-     * 
+     *
      * @param filename 文件名
      * @return 扩展名（不包含点号）
      */
@@ -231,7 +231,7 @@ public class MinioUtil {
 
     /**
      * 获取不包含扩展名的文件名
-     * 
+     *
      * @param filename 完整文件名
      * @return 不包含扩展名的文件名
      */
@@ -250,7 +250,7 @@ public class MinioUtil {
 
     /**
      * 格式化文件大小
-     * 
+     *
      * @param size 文件大小（字节）
      * @return 格式化后的大小字符串
      */
@@ -278,7 +278,7 @@ public class MinioUtil {
 
     /**
      * 构建对象路径
-     * 
+     *
      * @param fileType 文件类型
      * @param filename 文件名
      * @return 对象路径
@@ -298,7 +298,7 @@ public class MinioUtil {
 
     /**
      * 标准化路径（移除多余的斜杠）
-     * 
+     *
      * @param path 原始路径
      * @return 标准化后的路径
      */
@@ -325,7 +325,7 @@ public class MinioUtil {
 
     /**
      * 获取对象的父路径
-     * 
+     *
      * @param objectName 对象名称
      * @return 父路径
      */
@@ -344,7 +344,7 @@ public class MinioUtil {
 
     /**
      * 从完整路径中提取文件名
-     * 
+     *
      * @param objectName 对象名称
      * @return 文件名
      */
@@ -367,7 +367,7 @@ public class MinioUtil {
 
     /**
      * 计算文件的MD5值
-     * 
+     *
      * @param inputStream 文件输入流
      * @return MD5值
      */
@@ -402,7 +402,7 @@ public class MinioUtil {
 
     /**
      * 计算文件的MD5值
-     * 
+     *
      * @param file 文件
      * @return MD5值
      */
@@ -417,7 +417,7 @@ public class MinioUtil {
 
     /**
      * 检查文件内容是否为空
-     * 
+     *
      * @param inputStream 文件输入流
      * @return 是否为空
      */
@@ -436,7 +436,7 @@ public class MinioUtil {
 
     /**
      * 生成唯一的文件ID
-     * 
+     *
      * @return 文件ID
      */
     public String generateFileId() {
@@ -445,7 +445,7 @@ public class MinioUtil {
 
     /**
      * 生成基于时间戳的唯一文件名
-     * 
+     *
      * @param originalFilename 原始文件名
      * @return 唯一文件名
      */
@@ -463,7 +463,7 @@ public class MinioUtil {
 
     /**
      * 生成安全的文件名（移除特殊字符）
-     * 
+     *
      * @param filename 原始文件名
      * @return 安全的文件名
      */
@@ -495,9 +495,9 @@ public class MinioUtil {
 
     /**
      * 构建文件元数据
-     * 
-     * @param file 文件
-     * @param fileType 文件类型
+     *
+     * @param file        文件
+     * @param fileType    文件类型
      * @param description 描述
      * @return 元数据Map
      */
@@ -529,7 +529,7 @@ public class MinioUtil {
 
     /**
      * 构建文件的公开访问URL
-     * 
+     *
      * @param bucketName 存储桶名称
      * @param objectName 对象名称
      * @return 公开访问URL
@@ -541,7 +541,7 @@ public class MinioUtil {
 
     /**
      * 构建文件的缩略图URL
-     * 
+     *
      * @param bucketName 存储桶名称
      * @param objectName 对象名称
      * @return 缩略图URL
@@ -558,7 +558,7 @@ public class MinioUtil {
 
     /**
      * 检查对象是否存在
-     * 
+     *
      * @param bucketName 存储桶名称
      * @param objectName 对象名称
      * @return 是否存在
@@ -577,7 +577,7 @@ public class MinioUtil {
 
     /**
      * 获取对象信息
-     * 
+     *
      * @param bucketName 存储桶名称
      * @param objectName 对象名称
      * @return 对象信息
@@ -596,7 +596,7 @@ public class MinioUtil {
 
     /**
      * 创建空的输入流
-     * 
+     *
      * @return 空的输入流
      */
     public InputStream createEmptyInputStream() {
@@ -609,7 +609,7 @@ public class MinioUtil {
 
     /**
      * 获取配置的最大文件大小
-     * 
+     *
      * @return 最大文件大小（字节）
      */
     public long getMaxFileSize() {
@@ -618,7 +618,7 @@ public class MinioUtil {
 
     /**
      * 获取默认的预签名URL过期时间
-     * 
+     *
      * @return 过期时间（秒）
      */
     public int getDefaultPresignedUrlExpiry() {
@@ -627,7 +627,7 @@ public class MinioUtil {
 
     /**
      * 根据文件类型获取对应的存储桶名称
-     * 
+     *
      * @param fileType 文件类型
      * @return 存储桶名称
      */

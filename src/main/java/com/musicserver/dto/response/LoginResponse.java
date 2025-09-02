@@ -7,9 +7,9 @@ import lombok.NoArgsConstructor;
 
 /**
  * 登录响应DTO
- * 
+ * <p>
  * 用于返回登录结果，包含访问令牌和用户信息
- * 
+ *
  * @author Music Server Development Team
  * @version 1.0.0
  * @since 2025-09-01

@@ -12,15 +12,16 @@ import org.springframework.stereotype.Component;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
 /**
  * JWT认证异常处理器
- * 
+ * <p>
  * 实现AuthenticationEntryPoint接口，处理认证失败的情况
  * 当用户未认证或认证失败时，返回统一的JSON错误响应
- * 
+ *
  * @author Music Server Development Team
  * @version 1.0.0
  * @since 2025-09-01
@@ -37,9 +38,9 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
 
     /**
      * 处理认证异常
-     * 
-     * @param request HTTP请求
-     * @param response HTTP响应
+     *
+     * @param request       HTTP请求
+     * @param response      HTTP响应
      * @param authException 认证异常
      * @throws IOException IO异常
      */
@@ -47,13 +48,13 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
     public void commence(HttpServletRequest request,
                          HttpServletResponse response,
                          AuthenticationException authException) throws IOException {
-        
+
         String requestUri = request.getRequestURI();
         String method = request.getMethod();
         String clientIp = getClientIpAddress(request);
-        
-        log.warn("认证失败 - URI: {} {}, IP: {}, 异常: {}", 
-                 method, requestUri, clientIp, authException.getMessage());
+
+        log.warn("认证失败 - URI: {} {}, IP: {}, 异常: {}",
+                method, requestUri, clientIp, authException.getMessage());
 
         // 设置响应状态码和内容类型
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
@@ -62,7 +63,7 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
 
         // 创建错误响应
         Result<Void> result = Result.error(ResultCode.UNAUTHORIZED.getCode(), "认证失败，请重新登录");
-        
+
         // 序列化并写入响应
         String jsonResponse = objectMapper.writeValueAsString(result);
         response.getWriter().write(jsonResponse);
@@ -70,7 +71,7 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
 
     /**
      * 获取客户端IP地址
-     * 
+     *
      * @param request HTTP请求
      * @return 客户端IP地址
      */
@@ -79,12 +80,12 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
         if (xForwardedFor != null && !xForwardedFor.isEmpty() && !"unknown".equalsIgnoreCase(xForwardedFor)) {
             return xForwardedFor.split(",")[0].trim();
         }
-        
+
         String xRealIp = request.getHeader("X-Real-IP");
         if (xRealIp != null && !xRealIp.isEmpty() && !"unknown".equalsIgnoreCase(xRealIp)) {
             return xRealIp;
         }
-        
+
         return request.getRemoteAddr();
     }
 }

@@ -8,10 +8,10 @@ import java.util.List;
 
 /**
  * Minio配置属性类
- * 
+ * <p>
  * 管理Minio对象存储服务的连接配置参数
  * 支持多环境配置和自动配置属性绑定
- * 
+ *
  * @author Music Server Development Team
  * @version 1.0.0
  * @since 2025-09-01
@@ -23,7 +23,7 @@ public class MinioProperties {
 
     /**
      * Minio服务器端点URL
-     * 例如：http://localhost:9000 或 https://minio.example.com
+     * 例如：<a href="http://localhost:9000">...</a> 或 <a href="https://minio.example.com">...</a>
      */
     private String endpoint;
 
@@ -88,7 +88,7 @@ public class MinioProperties {
      */
     @Data
     public static class Bucket {
-        
+
         /**
          * 默认存储桶名称
          */
@@ -131,7 +131,7 @@ public class MinioProperties {
      */
     @Data
     public static class Upload {
-        
+
         /**
          * 单个文件最大大小（字节）
          * 默认100MB
@@ -142,23 +142,23 @@ public class MinioProperties {
          * 允许的音乐文件类型
          */
         private List<String> allowedMusicTypes = List.of(
-            "audio/mpeg", "audio/mp3", "audio/wav", "audio/flac", 
-            "audio/aac", "audio/ogg", "audio/m4a"
+                "audio/mpeg", "audio/mp3", "audio/wav", "audio/flac",
+                "audio/aac", "audio/ogg", "audio/m4a"
         );
 
         /**
          * 允许的图片文件类型
          */
         private List<String> allowedImageTypes = List.of(
-            "image/jpeg", "image/jpg", "image/png", "image/gif", 
-            "image/webp", "image/bmp"
+                "image/jpeg", "image/jpg", "image/png", "image/gif",
+                "image/webp", "image/bmp"
         );
 
         /**
          * 允许的歌词文件类型
          */
         private List<String> allowedLyricTypes = List.of(
-            "text/plain", "application/x-subrip", "text/lrc"
+                "text/plain", "application/x-subrip", "text/lrc"
         );
 
         /**
@@ -189,19 +189,19 @@ public class MinioProperties {
 
     /**
      * 获取完整的端点URL
-     * 
+     *
      * @return 带协议的完整URL
      */
     public String getFullEndpoint() {
         if (endpoint == null || endpoint.isEmpty()) {
             return null;
         }
-        
+
         // 如果已经包含协议，直接返回
         if (endpoint.startsWith("http://") || endpoint.startsWith("https://")) {
             return endpoint;
         }
-        
+
         // 根据secure标志添加协议
         String protocol = Boolean.TRUE.equals(secure) ? "https://" : "http://";
         return protocol + endpoint;
@@ -209,27 +209,27 @@ public class MinioProperties {
 
     /**
      * 验证必需的配置项是否已设置
-     * 
+     *
      * @return 配置是否有效
      */
     public boolean isValid() {
         return endpoint != null && !endpoint.trim().isEmpty() &&
-               accessKey != null && !accessKey.trim().isEmpty() &&
-               secretKey != null && !secretKey.trim().isEmpty();
+                accessKey != null && !accessKey.trim().isEmpty() &&
+                secretKey != null && !secretKey.trim().isEmpty();
     }
 
     /**
      * 获取所有存储桶名称列表
-     * 
+     *
      * @return 存储桶名称列表
      */
     public List<String> getAllBucketNames() {
         return List.of(
-            bucket.getName(),
-            bucket.getMusic(),
-            bucket.getImage(),
-            bucket.getLyric(),
-            bucket.getTemp()
+                bucket.getName(),
+                bucket.getMusic(),
+                bucket.getImage(),
+                bucket.getLyric(),
+                bucket.getTemp()
         );
     }
 }

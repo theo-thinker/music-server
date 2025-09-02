@@ -48,9 +48,9 @@ dependencies {
     runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.12.7")
 
     // MyBatis Plus 数据库框架
-    implementation("com.baomidou:mybatis-plus-spring-boot3-starter:3.5.13")
-    implementation("com.baomidou:mybatis-plus-generator:3.5.12")
-    implementation("com.baomidou:mybatis-plus-jsqlparser:3.5.12")
+    implementation("com.baomidou:mybatis-plus-spring-boot3-starter:3.5.14")
+    implementation("com.baomidou:mybatis-plus-generator:3.5.14")
+    implementation("com.baomidou:mybatis-plus-jsqlparser:3.5.14")
 
     // MinIO 文件存储服务
     implementation("io.minio:minio:8.5.17")

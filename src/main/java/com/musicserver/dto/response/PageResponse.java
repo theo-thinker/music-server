@@ -9,9 +9,9 @@ import java.util.List;
 
 /**
  * 分页响应DTO
- * 
+ * <p>
  * 用于返回分页查询结果的通用格式
- * 
+ *
  * @author Music Server Development Team
  * @version 1.0.0
  * @since 2025-09-01
@@ -66,10 +66,10 @@ public class PageResponse<T> {
 
     /**
      * 构造分页响应
-     * 
+     *
      * @param records 数据列表
-     * @param total 总记录数
-     * @param size 每页大小
+     * @param total   总记录数
+     * @param size    每页大小
      * @param current 当前页码
      */
     public PageResponse(List<T> records, Long total, Integer size, Integer current) {
@@ -84,7 +84,7 @@ public class PageResponse<T> {
 
     /**
      * 创建空的分页响应
-     * 
+     *
      * @param <T> 数据类型
      * @return 空的分页响应
      */
@@ -94,9 +94,9 @@ public class PageResponse<T> {
 
     /**
      * 从MyBatis Plus的IPage创建分页响应
-     * 
+     *
      * @param page MyBatis Plus分页对象
-     * @param <T> 数据类型
+     * @param <T>  数据类型
      * @return 分页响应
      */
     public static <T> PageResponse<T> of(com.baomidou.mybatisplus.core.metadata.IPage<T> page) {

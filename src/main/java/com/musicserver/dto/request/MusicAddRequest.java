@@ -10,9 +10,9 @@ import jakarta.validation.constraints.Max;
 
 /**
  * 音乐添加请求DTO
- * 
+ * <p>
  * 用于接收添加音乐时的请求参数
- * 
+ *
  * @author Music Server Development Team
  * @version 1.0.0
  * @since 2025-09-01

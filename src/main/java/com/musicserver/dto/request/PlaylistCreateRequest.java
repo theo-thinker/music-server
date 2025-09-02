@@ -8,9 +8,9 @@ import jakarta.validation.constraints.Size;
 
 /**
  * 播放列表创建请求DTO
- * 
+ * <p>
  * 用于接收创建播放列表时的请求参数
- * 
+ *
  * @author Music Server Development Team
  * @version 1.0.0
  * @since 2025-09-01

@@ -7,10 +7,10 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * IP定位服务配置属性类
- * 
+ * <p>
  * 管理IP定位模块的所有配置参数
  * 支持缓存配置、性能优化、安全设置等
- * 
+ *
  * @author Music Server Development Team
  * @version 1.0.0
  * @since 2025-09-01
@@ -276,7 +276,7 @@ public class IpLocationProperties {
 
     /**
      * 验证配置是否有效
-     * 
+     *
      * @return 配置是否有效
      */
     public boolean isValid() {
@@ -285,7 +285,7 @@ public class IpLocationProperties {
 
     /**
      * 获取缓存键前缀
-     * 
+     *
      * @return 缓存键前缀
      */
     public String getCacheKeyPrefix() {
@@ -294,7 +294,7 @@ public class IpLocationProperties {
 
     /**
      * 获取缓存过期时间（秒）
-     * 
+     *
      * @return 缓存过期时间
      */
     public long getCacheExpireSeconds() {
@@ -306,17 +306,17 @@ public class IpLocationProperties {
 
     /**
      * 是否启用安全功能
-     * 
+     *
      * @return 是否启用安全功能
      */
     public boolean isSecurityEnabled() {
-        return security.enableWhitelist || security.enableBlacklist || 
-               security.enableRiskDetection || security.enableAutoBan;
+        return security.enableWhitelist || security.enableBlacklist ||
+                security.enableRiskDetection || security.enableAutoBan;
     }
 
     /**
      * 是否为白名单IP
-     * 
+     *
      * @param ip IP地址
      * @return 是否为白名单IP
      */
@@ -324,7 +324,7 @@ public class IpLocationProperties {
         if (!security.enableWhitelist || security.whitelist == null) {
             return false;
         }
-        
+
         for (String whiteIp : security.whitelist) {
             if (ip.equals(whiteIp) || ip.startsWith(whiteIp)) {
                 return true;
@@ -335,7 +335,7 @@ public class IpLocationProperties {
 
     /**
      * 是否为黑名单IP
-     * 
+     *
      * @param ip IP地址
      * @return 是否为黑名单IP
      */
@@ -343,7 +343,7 @@ public class IpLocationProperties {
         if (!security.enableBlacklist || security.blacklist == null) {
             return false;
         }
-        
+
         for (String blackIp : security.blacklist) {
             if (ip.equals(blackIp) || ip.startsWith(blackIp)) {
                 return true;

@@ -4,6 +4,7 @@ import com.musicserver.common.Constants;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SignatureException;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.GrantedAuthority;
@@ -19,10 +20,10 @@ import java.util.stream.Collectors;
 
 /**
  * JWT工具类
- * 
+ * <p>
  * 使用jjwt 0.12.7最新API提供JWT令牌的生成、解析、验证等功能
  * 支持用户信息、权限、过期时间等处理
- * 
+ *
  * @author Music Server Development Team
  * @version 2.0.0
  * @since 2025-09-01
@@ -57,7 +58,7 @@ public class JwtTokenProvider {
 
     /**
      * 获取签名密钥
-     * 
+     *
      * @return 签名密钥
      */
     private SecretKey getSigningKey() {
@@ -67,9 +68,9 @@ public class JwtTokenProvider {
 
     /**
      * 生成访问令牌
-     * 
-     * @param userId 用户ID
-     * @param username 用户名
+     *
+     * @param userId      用户ID
+     * @param username    用户名
      * @param authorities 权限列表
      * @return JWT访问令牌
      */
@@ -96,8 +97,8 @@ public class JwtTokenProvider {
 
     /**
      * 生成刷新令牌
-     * 
-     * @param userId 用户ID
+     *
+     * @param userId   用户ID
      * @param username 用户名
      * @return JWT刷新令牌
      */
@@ -123,7 +124,7 @@ public class JwtTokenProvider {
 
     /**
      * 从令牌中获取用户名
-     * 
+     *
      * @param token JWT令牌
      * @return 用户名
      */
@@ -134,14 +135,14 @@ public class JwtTokenProvider {
 
     /**
      * 从令牌中获取用户ID
-     * 
+     *
      * @param token JWT令牌
      * @return 用户ID
      */
     public Long getUserIdFromToken(String token) {
         Claims claims = getClaimsFromToken(token);
         Object userIdObj = claims.get(Constants.JWT_USER_ID_KEY);
-        
+
         if (userIdObj instanceof Number number) {
             return number.longValue();
         } else if (userIdObj instanceof String stringValue) {
@@ -152,24 +153,24 @@ public class JwtTokenProvider {
                 return null;
             }
         }
-        
+
         return null;
     }
 
     /**
      * 从令牌中获取权限列表
-     * 
+     *
      * @param token JWT令牌
      * @return 权限列表
      */
     public Collection<? extends GrantedAuthority> getAuthoritiesFromToken(String token) {
         Claims claims = getClaimsFromToken(token);
         String authoritiesString = (String) claims.get(Constants.JWT_AUTHORITIES_KEY);
-        
+
         if (authoritiesString == null || authoritiesString.isEmpty()) {
             return Collections.emptyList();
         }
-        
+
         return Arrays.stream(authoritiesString.split(","))
                 .map(String::trim)
                 .filter(auth -> !auth.isEmpty())
@@ -179,7 +180,7 @@ public class JwtTokenProvider {
 
     /**
      * 获取令牌过期时间
-     * 
+     *
      * @param token JWT令牌
      * @return 过期时间
      */
@@ -190,7 +191,7 @@ public class JwtTokenProvider {
 
     /**
      * 获取令牌签发时间
-     * 
+     *
      * @param token JWT令牌
      * @return 签发时间
      */
@@ -201,7 +202,7 @@ public class JwtTokenProvider {
 
     /**
      * 获取令牌过期时间（Instant格式）
-     * 
+     *
      * @param token JWT令牌
      * @return 过期时间
      */
@@ -212,7 +213,7 @@ public class JwtTokenProvider {
 
     /**
      * 获取令牌签发时间（Instant格式）
-     * 
+     *
      * @param token JWT令牌
      * @return 签发时间
      */
@@ -223,8 +224,8 @@ public class JwtTokenProvider {
 
     /**
      * 验证令牌是否有效
-     * 
-     * @param token JWT令牌
+     *
+     * @param token    JWT令牌
      * @param username 用户名（可选，用于额外验证）
      * @return 是否有效
      */
@@ -232,19 +233,19 @@ public class JwtTokenProvider {
         try {
             Claims claims = getClaimsFromToken(token);
             String tokenUsername = claims.getSubject();
-            
+
             // 验证用户名匹配（如果提供）
             if (username != null && !username.equals(tokenUsername)) {
                 log.warn("令牌用户名不匹配: expected={}, actual={}", username, tokenUsername);
                 return false;
             }
-            
+
             // 验证令牌是否过期
             if (isTokenExpired(token)) {
                 log.warn("令牌已过期: username={}", tokenUsername);
                 return false;
             }
-            
+
             return true;
         } catch (JwtException | IllegalArgumentException e) {
             log.warn("令牌验证失败: {}", e.getMessage());
@@ -254,7 +255,7 @@ public class JwtTokenProvider {
 
     /**
      * 验证令牌是否有效（不验证用户名）
-     * 
+     *
      * @param token JWT令牌
      * @return 是否有效
      */
@@ -264,7 +265,7 @@ public class JwtTokenProvider {
 
     /**
      * 判断令牌是否过期
-     * 
+     *
      * @param token JWT令牌
      * @return 是否过期
      */
@@ -279,7 +280,7 @@ public class JwtTokenProvider {
 
     /**
      * 判断令牌是否可以刷新
-     * 
+     *
      * @param token JWT令牌
      * @return 是否可以刷新
      */
@@ -287,16 +288,16 @@ public class JwtTokenProvider {
         if (!allowRefresh) {
             return false;
         }
-        
+
         try {
             // 检查是否为刷新令牌
             Claims claims = getClaimsFromToken(token);
             String tokenType = (String) claims.get("tokenType");
-            
+
             if (!"refresh".equals(tokenType)) {
                 return false;
             }
-            
+
             // 检查是否过期
             return !isTokenExpired(token);
         } catch (JwtException | IllegalArgumentException e) {
@@ -306,7 +307,7 @@ public class JwtTokenProvider {
 
     /**
      * 刷新访问令牌
-     * 
+     *
      * @param refreshToken 刷新令牌
      * @return 新的访问令牌
      */
@@ -314,16 +315,16 @@ public class JwtTokenProvider {
         if (!canTokenBeRefreshed(refreshToken)) {
             throw new JwtException("无法刷新令牌");
         }
-        
+
         try {
             Claims claims = getClaimsFromToken(refreshToken);
             String username = claims.getSubject();
             Long userId = getUserIdFromToken(refreshToken);
-            
+
             // 这里需要从数据库重新获取用户权限
             // 暂时使用空权限列表，实际应该调用UserDetailsService
             Collection<GrantedAuthority> authorities = Collections.emptyList();
-            
+
             return generateAccessToken(userId, username, authorities);
         } catch (JwtException | IllegalArgumentException e) {
             throw new JwtException("刷新令牌失败: " + e.getMessage());
@@ -333,7 +334,7 @@ public class JwtTokenProvider {
     /**
      * 从令牌中获取Claims
      * 使用jjwt 0.12.7最新API
-     * 
+     *
      * @param token JWT令牌
      * @return Claims对象
      * @throws JwtException 令牌解析异常
@@ -345,7 +346,7 @@ public class JwtTokenProvider {
                     .verifyWith(getSigningKey())
                     .clockSkewSeconds(60) // 允许60秒的时钟偏差
                     .build();
-            
+
             return parser.parseSignedClaims(token).getPayload();
         } catch (ExpiredJwtException e) {
             log.debug("JWT令牌已过期: {}", e.getMessage());
@@ -370,7 +371,7 @@ public class JwtTokenProvider {
 
     /**
      * 从请求头中提取令牌
-     * 
+     *
      * @param authHeader 授权请求头
      * @return JWT令牌，如果没有有效令牌则返回null
      */
@@ -383,7 +384,7 @@ public class JwtTokenProvider {
 
     /**
      * 获取令牌剩余有效时间（秒）
-     * 
+     *
      * @param token JWT令牌
      * @return 剩余有效时间（秒），如果令牌无效或已过期返回0
      */
@@ -400,7 +401,7 @@ public class JwtTokenProvider {
 
     /**
      * 获取令牌的唯一标识（JTI）
-     * 
+     *
      * @param token JWT令牌
      * @return JTI标识，如果不存在返回null
      */
@@ -416,15 +417,15 @@ public class JwtTokenProvider {
 
     /**
      * 生成带JTI的令牌
-     * 
-     * @param userId 用户ID
-     * @param username 用户名
+     *
+     * @param userId      用户ID
+     * @param username    用户名
      * @param authorities 权限列表
-     * @param jti 令牌唯一标识
+     * @param jti         令牌唯一标识
      * @return JWT访问令牌
      */
-    public String generateAccessTokenWithJti(Long userId, String username, 
-                                            Collection<? extends GrantedAuthority> authorities, String jti) {
+    public String generateAccessTokenWithJti(Long userId, String username,
+                                             Collection<? extends GrantedAuthority> authorities, String jti) {
         Instant now = Instant.now();
         Instant expiration = now.plus(jwtExpiration, ChronoUnit.SECONDS);
 
@@ -448,7 +449,7 @@ public class JwtTokenProvider {
 
     /**
      * 检查令牌是否在黑名单中
-     * 
+     *
      * @param token JWT令牌
      * @return 是否在黑名单中
      */
@@ -461,7 +462,7 @@ public class JwtTokenProvider {
     /**
      * 创建无状态JWT解析器
      * 使用jjwt 0.12.7最新API，可复用以提高性能
-     * 
+     *
      * @return JWT解析器
      */
     private JwtParser createParser() {
@@ -473,7 +474,7 @@ public class JwtTokenProvider {
 
     /**
      * 验证令牌完整性（不抛出异常）
-     * 
+     *
      * @param token JWT令牌
      * @return 验证结果信息
      */
@@ -482,15 +483,15 @@ public class JwtTokenProvider {
             Claims claims = getClaimsFromToken(token);
             String username = claims.getSubject();
             Instant expiration = claims.getExpiration().toInstant();
-            
+
             if (expiration.isBefore(Instant.now())) {
                 return new TokenValidationResult(false, "令牌已过期", username);
             }
-            
+
             if (isTokenBlacklisted(token)) {
                 return new TokenValidationResult(false, "令牌已被列入黑名单", username);
             }
-            
+
             return new TokenValidationResult(true, "令牌有效", username);
         } catch (ExpiredJwtException e) {
             return new TokenValidationResult(false, "令牌已过期", e.getClaims().getSubject());
@@ -508,6 +509,7 @@ public class JwtTokenProvider {
     /**
      * 令牌验证结果
      */
+    @Getter
     public static class TokenValidationResult {
         private final boolean valid;
         private final String message;
@@ -519,23 +521,12 @@ public class JwtTokenProvider {
             this.username = username;
         }
 
-        public boolean isValid() {
-            return valid;
-        }
-
-        public String getMessage() {
-            return message;
-        }
-
-        public String getUsername() {
-            return username;
-        }
     }
 
     /**
      * 生成JWT令牌构建器
      * 使用Builder模式提高代码可读性
-     * 
+     *
      * @return JWT令牌构建器
      */
     public TokenBuilder tokenBuilder() {
@@ -554,7 +545,7 @@ public class JwtTokenProvider {
         private String tokenType = "access";
         private Instant issuedAt = Instant.now();
         private Instant expiration;
-        private Map<String, Object> claims = new HashMap<>();
+        private final Map<String, Object> claims = new HashMap<>();
 
         public TokenBuilder subject(String subject) {
             this.subject = subject;

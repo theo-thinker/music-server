@@ -10,9 +10,9 @@ import java.time.LocalDateTime;
 
 /**
  * 文件信息响应DTO
- * 
+ * <p>
  * 用于返回文件基本信息
- * 
+ *
  * @author Music Server Development Team
  * @version 1.0.0
  * @since 2025-09-01

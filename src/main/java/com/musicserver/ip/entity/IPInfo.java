@@ -5,15 +5,16 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
 /**
  * IP信息实体类
- * 
+ * <p>
  * 封装完整的IP地理位置信息和相关元数据
  * 支持缓存和持久化存储
- * 
+ *
  * @author Music Server Development Team
  * @version 1.0.0
  * @since 2025-09-01
@@ -24,6 +25,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class IPInfo implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     /**
@@ -138,73 +140,73 @@ public class IPInfo implements Serializable {
 
     /**
      * 获取简短位置描述
-     * 
+     *
      * @return 位置描述
      */
     public String getShortLocation() {
         StringBuilder sb = new StringBuilder();
-        
+
         if (country != null && !country.isEmpty() && !"0".equals(country)) {
             sb.append(country);
         }
-        
+
         if (region != null && !region.isEmpty() && !"0".equals(region)) {
-            if (sb.length() > 0) sb.append("-");
+            if (!sb.isEmpty()) sb.append("-");
             sb.append(region);
         }
-        
+
         if (city != null && !city.isEmpty() && !"0".equals(city)) {
-            if (sb.length() > 0) sb.append("-");
+            if (!sb.isEmpty()) sb.append("-");
             sb.append(city);
         }
-        
-        return sb.length() > 0 ? sb.toString() : "未知地区";
+
+        return !sb.isEmpty() ? sb.toString() : "未知地区";
     }
 
     /**
      * 获取详细位置描述
-     * 
+     *
      * @return 详细位置描述
      */
     public String getDetailLocation() {
         StringBuilder sb = new StringBuilder();
-        
+
         if (country != null && !country.isEmpty() && !"0".equals(country)) {
             sb.append(country);
         }
-        
+
         if (region != null && !region.isEmpty() && !"0".equals(region)) {
-            if (sb.length() > 0) sb.append(" ");
+            if (!sb.isEmpty()) sb.append(" ");
             sb.append(region);
         }
-        
+
         if (city != null && !city.isEmpty() && !"0".equals(city)) {
-            if (sb.length() > 0) sb.append(" ");
+            if (!sb.isEmpty()) sb.append(" ");
             sb.append(city);
         }
-        
+
         if (isp != null && !isp.isEmpty() && !"0".equals(isp)) {
-            if (sb.length() > 0) sb.append(" ");
+            if (!sb.isEmpty()) sb.append(" ");
             sb.append("[").append(isp).append("]");
         }
-        
-        return sb.length() > 0 ? sb.toString() : "未知地区";
+
+        return !sb.isEmpty() ? sb.toString() : "未知地区";
     }
 
     /**
      * 检查是否为有效的地理位置信息
-     * 
+     *
      * @return 是否有效
      */
     public boolean isValidLocation() {
         return (country != null && !country.isEmpty() && !"0".equals(country)) ||
-               (region != null && !region.isEmpty() && !"0".equals(region)) ||
-               (city != null && !city.isEmpty() && !"0".equals(city));
+                (region != null && !region.isEmpty() && !"0".equals(region)) ||
+                (city != null && !city.isEmpty() && !"0".equals(city));
     }
 
     /**
      * 检查是否为国内IP
-     * 
+     *
      * @return 是否为国内IP
      */
     public boolean isDomesticIp() {
@@ -213,23 +215,19 @@ public class IPInfo implements Serializable {
 
     /**
      * 获取安全等级描述
-     * 
+     *
      * @return 安全等级描述
      */
     public String getSecurityLevelDesc() {
         if (securityLevel == null) {
             return "未知";
         }
-        
-        switch (securityLevel) {
-            case 1:
-                return "安全";
-            case 2:
-                return "可疑";
-            case 3:
-                return "危险";
-            default:
-                return "未知";
-        }
+
+        return switch (securityLevel) {
+            case 1 -> "安全";
+            case 2 -> "可疑";
+            case 3 -> "危险";
+            default -> "未知";
+        };
     }
 }

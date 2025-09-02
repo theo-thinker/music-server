@@ -1,6 +1,7 @@
 package com.musicserver.config;
 
 import io.minio.MinioClient;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -12,10 +13,10 @@ import java.time.Duration;
 
 /**
  * Minio对象存储配置类
- * 
+ * <p>
  * 负责初始化Minio客户端和相关配置
  * 支持条件化配置和自动装配
- * 
+ *
  * @author Music Server Development Team
  * @version 1.0.0
  * @since 2025-09-01
@@ -31,9 +32,9 @@ public class MinioConfig {
 
     /**
      * 创建Minio客户端Bean
-     * 
+     * <p>
      * 配置连接参数、超时时间等
-     * 
+     *
      * @return 配置好的MinioClient实例
      * @throws IllegalArgumentException 当配置参数无效时
      */
@@ -53,13 +54,13 @@ public class MinioConfig {
             builder.httpClient(createHttpClient());
 
             MinioClient client = builder.build();
-            
-            log.info("Minio客户端初始化成功 - 端点: {}, 安全连接: {}", 
-                    minioProperties.getFullEndpoint(), 
+
+            log.info("Minio客户端初始化成功 - 端点: {}, 安全连接: {}",
+                    minioProperties.getFullEndpoint(),
                     minioProperties.getSecure());
-            
+
             return client;
-            
+
         } catch (Exception e) {
             log.error("Minio客户端初始化失败", e);
             throw new IllegalStateException("无法初始化Minio客户端: " + e.getMessage(), e);
@@ -68,7 +69,7 @@ public class MinioConfig {
 
     /**
      * 创建HTTP客户端配置
-     * 
+     *
      * @return 配置好的OkHttpClient
      */
     private okhttp3.OkHttpClient createHttpClient() {
@@ -82,13 +83,13 @@ public class MinioConfig {
 
     /**
      * 验证Minio配置参数
-     * 
+     *
      * @throws IllegalArgumentException 当配置无效时
      */
     private void validateConfiguration() {
         if (!minioProperties.isValid()) {
             throw new IllegalArgumentException(
-                "Minio配置无效：请检查endpoint、accessKey和secretKey是否正确配置"
+                    "Minio配置无效：请检查endpoint、accessKey和secretKey是否正确配置"
             );
         }
 
@@ -96,11 +97,11 @@ public class MinioConfig {
         if (minioProperties.getConnectTimeout() <= 0) {
             throw new IllegalArgumentException("连接超时时间必须大于0");
         }
-        
+
         if (minioProperties.getReadTimeout() <= 0) {
             throw new IllegalArgumentException("读取超时时间必须大于0");
         }
-        
+
         if (minioProperties.getWriteTimeout() <= 0) {
             throw new IllegalArgumentException("写入超时时间必须大于0");
         }
@@ -115,9 +116,9 @@ public class MinioConfig {
 
     /**
      * Minio客户端健康检查Bean
-     * 
+     * <p>
      * 提供健康检查功能，用于监控Minio服务状态
-     * 
+     *
      * @param minioClient Minio客户端
      * @return 健康检查指示器
      */
@@ -130,7 +131,7 @@ public class MinioConfig {
      * Minio健康检查指示器
      */
     public static class MinioHealthIndicator {
-        
+
         private final MinioClient minioClient;
         private final MinioProperties minioProperties;
 
@@ -141,23 +142,23 @@ public class MinioConfig {
 
         /**
          * 检查Minio服务健康状态
-         * 
+         *
          * @return 健康状态信息
          */
         public HealthStatus checkHealth() {
             try {
                 // 尝试列举存储桶以测试连接
                 minioClient.listBuckets();
-                
+
                 return HealthStatus.builder()
                         .status("UP")
                         .endpoint(minioProperties.getFullEndpoint())
                         .message("Minio服务连接正常")
                         .build();
-                        
+
             } catch (Exception e) {
                 log.warn("Minio健康检查失败", e);
-                
+
                 return HealthStatus.builder()
                         .status("DOWN")
                         .endpoint(minioProperties.getFullEndpoint())
@@ -170,11 +171,12 @@ public class MinioConfig {
     /**
      * 健康状态数据类
      */
+    @Getter
     public static class HealthStatus {
-        private String status;
-        private String endpoint;
-        private String message;
-        private long timestamp;
+        private final String status;
+        private final String endpoint;
+        private final String message;
+        private final long timestamp;
 
         private HealthStatus(Builder builder) {
             this.status = builder.status;
@@ -212,10 +214,5 @@ public class MinioConfig {
             }
         }
 
-        // Getters
-        public String getStatus() { return status; }
-        public String getEndpoint() { return endpoint; }
-        public String getMessage() { return message; }
-        public long getTimestamp() { return timestamp; }
     }
 }

@@ -8,9 +8,9 @@ import lombok.NoArgsConstructor;
 
 /**
  * 音乐播放状态消息DTO
- * 
+ * <p>
  * 用于WebSocket传输音乐播放状态信息
- * 
+ *
  * @author Music Server Development Team
  * @version 1.0.0
  * @since 2025-09-01

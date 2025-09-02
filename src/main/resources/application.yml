@@ -58,7 +58,7 @@ spring:
       # 排除不需要重启的目录
       exclude: static/**,public/**,META-INF/maven/**,META-INF/resources/**
       # 触发文件
-      trigger-file: .reloadtrigger
+      # trigger-file: .reloadtrigger
     # 远程开发支持
     remote:
       # 生产环境下禁用远程开发
@@ -242,9 +242,9 @@ minio:
   # Minio服务器端点
   endpoint: localhost:9000
   # 访问密钥
-  access-key: admin
+  access-key: minioadmin
   # 秘密访问密钥
-  secret-key: admin123456
+  secret-key: minioadmin
   # 是否使用HTTPS
   secure: false
   # 连接超时时间（毫秒）
